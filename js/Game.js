@@ -1,6 +1,10 @@
+// Don't use this file anymore
+
 let Game = function(canvas) {
     this.canvas = canvas;
     this.ctx = canvas.getContext('2d');
+
+	// TODO canvas resize event listener
 
     /* For pixel art */
     /*
