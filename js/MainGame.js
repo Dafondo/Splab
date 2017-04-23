@@ -5,6 +5,8 @@ var cursors;
 var key_jump;
 var transform;
 
+var speed = 1;
+
 // Sprites
 var player;
 var platforms;
@@ -12,9 +14,8 @@ var face;
 var hair;
 
 // Animations
-// var walk;
-// var faceBounce;
-// var hairBounce;
+var sciFPS = 12;
+var cFPS = 24;
 
 Splab.MainGame = function(){};
 
@@ -52,14 +53,22 @@ Splab.MainGame.prototype = {
         hair.tint = Math.random() * 0xffffff;
         player.addChild(hair);
 
+        shirt = this.make.sprite(0, 0, 'scishirt');
+        shirt.anchor.set(0.5, 0.5);
+        shirt.smoothed = false;
+        shirt.tint = Math.random() * 0xffffff;
+        player.addChild(shirt);
+
         sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
         cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
         faceBounce = face.animations.add('faceBounce');
         hairBounce = hair.animations.add('hairBounce');
+        shirtBounce = shirt.animations.add('shirtBounce');
 
-        player.animations.play('sciwalk', 12, true);
-        face.animations.play('faceBounce', 12, true);
-        hair.animations.play('hairBounce', 12, true);
+        player.animations.play('sciwalk', sciFPS, true);
+        face.animations.play('faceBounce', sciFPS, true);
+        hair.animations.play('hairBounce', sciFPS, true);
+        shirt.animations.play('shirtBounce', sciFPS, true);
 		// Player physics
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 800;
@@ -99,11 +108,11 @@ Splab.MainGame.prototype = {
 
 		// Move with arrow keys
 		if (cursors.left.isDown) {
-			player.body.velocity.x = -200;
+			player.body.velocity.x = -200*speed;
             player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
-			player.body.velocity.x = 200;
+			player.body.velocity.x = 200*speed;
             player.scale.x = 4;
 		}
 
@@ -116,9 +125,13 @@ Splab.MainGame.prototype = {
         if(transform.isDown) {
             face.alpha = 0;
             hair.alpha = 0;
+            shirt.alpha = 0;
             // player.animations.stop();
-            player.animations.play('cwalk', 12, true);
+            player.animations.play('cwalk', 24, true);
+            speed = 2;
         }
+
+
 
 	}
 }
