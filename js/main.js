@@ -1,6 +1,6 @@
 var Splab = Splab || {};
 
-var game = Splab.game = new Phaser.Game(window.innerWidth, window.innerHeight, Phaser.AUTO);
+var game = Splab.game = new Phaser.Game(800, 800, Phaser.AUTO);
 
 Splab.game.global = {
     menuMusic: null
