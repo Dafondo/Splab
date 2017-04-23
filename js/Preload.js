@@ -11,7 +11,7 @@ Splab.Preload.prototype = {
 		// this.game.load.image('manly_chicken', 'assets/sprites/manly_chicken.jpg');
 		this.game.load.image('c', 'assets/sprites/c.png');
 		this.game.load.image('platform', 'assets/sprites/platform.png');
-        this.load.image('background','assets/tests/black.png');
+        this.load.image('background','assets/sprites/black.jpg');
 
 	},
     loadStart: function() {
