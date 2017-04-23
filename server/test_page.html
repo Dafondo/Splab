@@ -1,2 +1,32 @@
-<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
-<script type='text/javascript' src="../js/socket-utils.js"></script>
+<head>
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+</head>
+
+<body>
+    <p>Username:</p>
+    <input id='uname'></input>
+    <p>Capacity:</p>
+    <input id='cap'></input>
+    <p>Size:</p>
+    <input id='sz'></input>
+    <br><br>
+    <button id='create'>Create</button>
+    <button id='join'>Join</button>
+
+    <p id='result'></p>
+
+    <script type='text/javascript' src="../js/socket-utils.js"></script>
+    <script>
+document.getElementById('create').addEventListener('click', function() {
+    var uname = document.getElementById('uname').value;
+    var capacity = parseInt(document.getElementById('cap').value, 10);
+    var size = document.getElementById('sz').value;
+    create_room(uname, capacity, size);
+});
+
+document.getElementById('join').addEventListener('click', function() {
+    var uname = document.getElementById('uname').value;
+    join(uname);
+});
+    </script>
+</body>

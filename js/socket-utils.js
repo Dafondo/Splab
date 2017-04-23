@@ -14,6 +14,7 @@ socket.on('connection', function(data) {
 
 socket.on('start', function() {
     // TODO all players join, start the game
+    console.log('start');
 });
 
 socket.on('created', function(data) {
@@ -22,6 +23,7 @@ socket.on('created', function(data) {
     //     'uname' = username of the creator (probably you)
     //     'capacity' = capacity of room
     //     'size' = size of game created
+    console.log(data);
 });
 
 socket.on('joined', function(data) {
@@ -31,6 +33,7 @@ socket.on('joined', function(data) {
     //     'size' = size of game created
     //     'current_users' = list of tuple of users in ('uname', id)
     // find your own user id by identifying which one has the same uname as you
+    console.log(data);
 });
 
 socket.on('join', function(data) {
@@ -38,6 +41,7 @@ socket.on('join', function(data) {
     // data is a dictionary with fields of
     //     'uname': name of the new user
     //     'id': id of the new user
+    // XXX should only matter **after** created or joined
 });
 
 socket.on('action', function(data) {
@@ -59,4 +63,8 @@ var create_room = function(uname, capacity, size) {
     socket.emit('create', {'uname': uname,
                            'capacity': capacity,
                            'size': size});
-}
+};
+
+var join = function(uname) {
+    socket.emit('join', uname);
+};
