@@ -11,6 +11,11 @@ Splab.Preload.prototype = {
 		// this.game.load.image('manly_chicken', 'assets/sprites/manly_chicken.jpg');
 		this.game.load.image('c', 'assets/sprites/c.png');
 		this.game.load.image('platform', 'assets/sprites/platform.png');
+        this.game.load.spritesheet('cflap', 'assets/sprites/cflap.png', 32, 32, 8);
+        this.game.load.spritesheet('girlhair', 'assets/sprites/girlhair.png', 32, 32, 8);
+        this.game.load.spritesheet('guyhair', 'assets/sprites/guyhair.png', 32, 32, 8);
+        this.game.load.spritesheet('sciwalk', 'assets/sprites/sciwalk.png', 32, 32, 8);
+        this.game.load.spritesheet('sciface', 'assets/sprites/sciface.png', 32, 32, 8);
         this.load.image('background','assets/sprites/black.jpg');
 
 	},

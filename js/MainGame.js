@@ -7,6 +7,13 @@ var key_jump;
 // Sprites
 var player;
 var platforms;
+var face;
+var hair;
+
+// Animations
+// var walk;
+// var faceBounce;
+// var hairBounce;
 
 Splab.MainGame = function(){};
 
@@ -19,22 +26,43 @@ Splab.MainGame.prototype = {
 	},
 	create: function() {
         game.add.tileSprite(0, 0, 1920, 1920, 'background');
-        
+
         game.world.setBounds(0, 0, 1920, 1920);
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Create player
-		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'c');
+		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'sciwalk');
+        player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
 		this.game.physics.arcade.enable(player);
 
+        face = this.make.sprite(0, 0, 'sciface');
+        face.anchor.set(0.5, 0.5);
+        face.smoothed = false;
+        face.tint = Math.random() * 0xffffff;
+        player.addChild(face);
+
+        hair = this.make.sprite(0, 0, 'guyhair');
+        hair.anchor.set(0.5, 0.5);
+        hair.smoothed = false;
+        hair.tint = Math.random() * 0xffffff;
+        player.addChild(hair);
+
+        walk = player.animations.add('walk');
+        faceBounce = face.animations.add('faceBounce');
+        hairBounce = hair.animations.add('hairBounce');
+
+        player.animations.play('walk', 12, true);
+        face.animations.play('faceBounce', 12, true);
+        hair.animations.play('hairBounce', 12, true);
 		// Player physics
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 800;
 		player.body.collideWorldBounds = true;
+        player.body.velocity.x = 200;
 
 		// Player animations
 		// player.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -62,14 +90,16 @@ Splab.MainGame.prototype = {
 	update: function() {
         var hitPlatform = game.physics.arcade.collide(player, platforms);
 		// Reset velocity to zero
-		player.body.velocity.x = 0;
+		// player.body.velocity.x = 0;
 
 		// Move with arrow keys
 		if (cursors.left.isDown) {
 			player.body.velocity.x = -200;
+            player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
 			player.body.velocity.x = 200;
+            player.scale.x = 4;
 		}
 
 		// Jump
