@@ -3,6 +3,7 @@ var Splab = Splab || {};
 // Controls
 var cursors;
 var key_jump;
+var transform;
 
 // Sprites
 var player;
@@ -33,7 +34,7 @@ Splab.MainGame.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Create player
-		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'sciwalk');
+		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
@@ -51,11 +52,12 @@ Splab.MainGame.prototype = {
         hair.tint = Math.random() * 0xffffff;
         player.addChild(hair);
 
-        walk = player.animations.add('walk');
+        sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
+        cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
         faceBounce = face.animations.add('faceBounce');
         hairBounce = hair.animations.add('hairBounce');
 
-        player.animations.play('walk', 12, true);
+        player.animations.play('sciwalk', 12, true);
         face.animations.play('faceBounce', 12, true);
         hair.animations.play('hairBounce', 12, true);
 		// Player physics
@@ -83,11 +85,14 @@ Splab.MainGame.prototype = {
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        transform = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+
         this.camera.follow(player);
 
 
 	},
 	update: function() {
+        // Check collisions
         var hitPlatform = game.physics.arcade.collide(player, platforms);
 		// Reset velocity to zero
 		// player.body.velocity.x = 0;
@@ -107,7 +112,13 @@ Splab.MainGame.prototype = {
 			player.body.velocity.y -= 100; // TODO use impulse instead
 		}
 
-		// Check collisions
+        // Transform
+        if(transform.isDown) {
+            face.alpha = 0;
+            hair.alpha = 0;
+            // player.animations.stop();
+            player.animations.play('cwalk', 12, true);
+        }
 
 	}
 }

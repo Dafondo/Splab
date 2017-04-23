@@ -16,6 +16,7 @@ Splab.Preload.prototype = {
         this.game.load.spritesheet('guyhair', 'assets/sprites/guyhair.png', 32, 32, 8);
         this.game.load.spritesheet('sciwalk', 'assets/sprites/sciwalk.png', 32, 32, 8);
         this.game.load.spritesheet('sciface', 'assets/sprites/sciface.png', 32, 32, 8);
+        this.game.load.spritesheet('allwalk', 'assets/sprites/allwalk.png', 32, 32, 16)
         this.load.image('background','assets/sprites/black.jpg');
 
 	},
