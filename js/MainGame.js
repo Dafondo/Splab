@@ -61,14 +61,14 @@ Splab.MainGame.prototype = {
 
         sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
         cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
-        faceBounce = face.animations.add('faceBounce');
-        hairBounce = hair.animations.add('hairBounce');
-        shirtBounce = shirt.animations.add('shirtBounce');
+        faceBounce = face.animations.add('bounce');
+        hairBounce = hair.animations.add('bounce');
+        shirtBounce = shirt.animations.add('bounce');
 
         player.animations.play('sciwalk', sciFPS, true);
-        face.animations.play('faceBounce', sciFPS, true);
-        hair.animations.play('hairBounce', sciFPS, true);
-        shirt.animations.play('shirtBounce', sciFPS, true);
+        face.animations.play('bounce', sciFPS, true);
+        hair.animations.play('bounce', sciFPS, true);
+        shirt.animations.play('bounce', sciFPS, true);
 		// Player physics
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 800;
@@ -100,6 +100,16 @@ Splab.MainGame.prototype = {
 
 
 	},
+    transformBack: function() {
+        face.alpha = 1;
+        hair.alpha = 1;
+        shirt.alpha = 1;
+        face.animations.play('bounce', sciFPS, true);
+        hair.animations.play('bounce', sciFPS, true);
+        shirt.animations.play('bounce', sciFPS, true);
+        player.animations.play('sciwalk', sciFPS, true);
+        speed = 1;
+    },
 	update: function() {
         // Check collisions
         var hitPlatform = game.physics.arcade.collide(player, platforms);
@@ -127,8 +137,12 @@ Splab.MainGame.prototype = {
             hair.alpha = 0;
             shirt.alpha = 0;
             // player.animations.stop();
-            player.animations.play('cwalk', 24, true);
+            player.animations.play('cwalk', cFPS, true);
+            face.animations.stop();
+            hair.animations.stop();
+            shirt.animations.stop();
             speed = 2;
+            this.time.events.add(Phaser.Timer.SECOND * 3, this.transformBack, this);
         }
 
 
