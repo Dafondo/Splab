@@ -24,11 +24,13 @@ Splab.MainGame.prototype = {
 
 		// Create player
 		player = this.game.add.sprite(32, this.game.world.height - 200, 'c');
+        player.smoothed = false;
+        player.scale.setTo(4);
 		this.game.physics.arcade.enable(player);
 
 		// Player physics
 		player.body.bounce.y = 0.2;
-		player.body.gravity.y = 300;
+		player.body.gravity.y = 800;
 		player.body.collideWorldBounds = true;
 
 		// Player animations
@@ -53,6 +55,7 @@ Splab.MainGame.prototype = {
 
 	},
 	update: function() {
+        var hitPlatform = game.physics.arcade.collide(player, platforms);
 		// Reset velocity to zero
 		player.body.velocity.x = 0;
 
@@ -70,6 +73,6 @@ Splab.MainGame.prototype = {
 		}
 
 		// Check collisions
-		var hitPlatform = game.physics.arcade.collide(player, platforms);
+
 	}
 }
