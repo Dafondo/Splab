@@ -50,14 +50,10 @@ socket.on('action', function(data) {
     // TODO
     // server sends action data
     // data fields:
-    //  'id': the id the player
-    //  'act': action, can be
-    //      'change_direction'
-    //      'dies'
-    //      'transforms'
-    //      'kills'
-    //      'run'
-    //  'target': only available if act is kill, the targetID of the killing
+    //  'id': the id the agent
+    //  'player': if the change happened to a player
+    //  'variable': the variable to change
+    //  'to': the result of the change
     console.log(data);
 });
 
@@ -69,4 +65,11 @@ var create_room = function(uname, capacity, size) {
 
 var join = function(uname) {
     socket.emit('join', uname);
+};
+
+var change_state = function(id, player, variable, to) {
+    socket.emit('change_state', {'id': id,
+                                 'player': player,
+                                 'variable': variable,
+                                 'to': to});
 };

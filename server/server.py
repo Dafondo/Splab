@@ -127,9 +127,9 @@ def join_request(data):
         debug("GAME IS READY TO START")
         emit('start', state, broadcast=True) # game starts
 
-@socketio.on("act")
-def act(data):
-    pass
+@socketio.on("change_state")
+def change_state(data): # we actually just broadcast
+    emit('action', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
