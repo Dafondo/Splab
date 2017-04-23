@@ -12,9 +12,10 @@ socket.on('connection', function(data) {
     console.log(data);
 });
 
-socket.on('start', function() {
+socket.on('start', function(state) {
     // TODO all players join, start the game
-    console.log('start');
+    // pretty important... setup everything!!!!
+    console.log(state);
 });
 
 socket.on('created', function(data) {
@@ -42,6 +43,7 @@ socket.on('join', function(data) {
     //     'uname': name of the new user
     //     'id': id of the new user
     // XXX should only matter **after** created or joined
+    console.log(data);
 });
 
 socket.on('action', function(data) {
