@@ -18,12 +18,15 @@ Splab.MainGame.prototype = {
 
 	},
 	create: function() {
+        game.add.tileSprite(0, 0, 1920, 1920, 'background');
+        
+        game.world.setBounds(0, 0, 1920, 1920);
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Create player
-		player = this.game.add.sprite(32, this.game.world.height - 200, 'c');
+		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'c');
         player.smoothed = false;
         player.scale.setTo(4);
 		this.game.physics.arcade.enable(player);
@@ -52,6 +55,8 @@ Splab.MainGame.prototype = {
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+        this.camera.follow(player);
+
 
 	},
 	update: function() {
