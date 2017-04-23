@@ -27,9 +27,11 @@ Splab.MainGame.prototype = {
 
 	},
 	create: function() {
-        game.add.tileSprite(0, 0, 1920, 1920, 'background');
+        // this.add.tileSprite(0, 0, 1920, 1920, 'background');
 
-        game.world.setBounds(0, 0, 1920, 1920);
+        this.world.setBounds(0, 0, 1920, 1920);
+
+        this.stage.backgroundColor = '#ffffff';
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -101,13 +103,19 @@ Splab.MainGame.prototype = {
 
 	},
     transformBack: function() {
+        face.tint = Math.random() * 0xffffff;
+        hair.tint = Math.random() * 0xffffff;
+        shirt.tint = Math.random() * 0xffffff;
+
         face.alpha = 1;
         hair.alpha = 1;
         shirt.alpha = 1;
+
         face.animations.play('bounce', sciFPS, true);
         hair.animations.play('bounce', sciFPS, true);
         shirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
+        
         speed = 1;
     },
 	update: function() {
