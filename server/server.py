@@ -67,12 +67,12 @@ def query_state():
     else:
         emit('connection', {'state': 'waiting'})
 
-@app.route("/create", methods=['GET', 'POST'])
-def create_game():
+@socketio.on("create")
+def create_game(data):
     global state
     state = {}
-    state['capacity'] = int(request.args.get( 'capacity' ))
-    state['size'] = request.args.get( 'size' )
+    state['capacity'] = data['capacity']
+    state['size'] = data['size']
     if state['size'] == 'small': # TODO init sizes and shit
         state['world_size'] = small_world_size
         state['npc_alive'] = small_npc_count
@@ -95,23 +95,23 @@ def create_game():
     state['players'] = []
 
     # Player schema
-    state['players'].append(gen_player(request.args.get( 'uname' ), 0))
+    state['players'].append(gen_player(data['uname'], 0))
     state['players_init'].append(r.randint(0, state['world_size']))
 
-    emit('created', request.args)
-    debug("CREATED -- " + json.dumps(request.args))
+    emit('created', data)
+    debug("CREATED -- " + json.dumps(data))
 
     if len(state['players']) == state['capacity']:
         debug("GAME IS READY TO START")
         emit('start', state, broadcast=True) # game starts
 
-@app.route("/join/", methods=['GET', 'POST'])
-def join_request():
+@socketio.on("join")
+def join_request(data):
     global state
     if len(state['players']) == state['capacity']: # room's full
         return
-    joined_user = (request.args.get('uname'), len(state['players']))
-    state['players'].append(gen_player(joined_user[0], len(state['players'])))
+    joined_user = (data, len(state['players']))
+    state['players'].append(gen_player(data, len(state['players'])))
     state['players_init'].append(r.randint(0, state['world_size']))
 
     emit('join', {'uname': joined_user[0], 'id': joined_user[1]},
@@ -127,9 +127,9 @@ def join_request():
         debug("GAME IS READY TO START")
         emit('start', state, broadcast=True) # game starts
 
-@app.route("/change_state", methods=['GET', 'POST'])
+@socketio.on("change_state")
 def change_state(data): # we actually just broadcast
-    emit('action', request.json, broadcast=True)
+    emit('action', data, broadcast=True)
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)

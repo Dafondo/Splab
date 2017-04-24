@@ -21,18 +21,12 @@ document.getElementById('create').addEventListener('click', function() {
     var uname = document.getElementById('uname').value;
     var capacity = parseInt(document.getElementById('cap').value, 10);
     var size = document.getElementById('sz').value;
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", 'http://hatch01.cs.unc.edu:5000/create?uname=' + uname +
-            "&capacity=" + capacity + "&size=" + size, null);
-    xmlHttp.send(null);
+    create_room(uname, capacity, size);
 });
 
 document.getElementById('join').addEventListener('click', function() {
     var uname = document.getElementById('uname').value;
-    var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", 'http://hatch01.cs.unc.edu:5000/create?uname=' + uname,
-            null);
-    xmlHttp.send(null);
+    join(uname);
 });
     </script>
 </body>
