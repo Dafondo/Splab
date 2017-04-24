@@ -147,7 +147,7 @@ Splab.MainGame.prototype = {
 
 		// Player physics
 		player.body.bounce.y = 0;
-		player.body.gravity.y = 800;
+		player.body.gravity.y = 0;
 		player.body.collideWorldBounds = true;
 
 		// Create platforms that the player can walk on
@@ -225,6 +225,9 @@ Splab.MainGame.prototype = {
 		if (key_jump.isDown && player.body.touching.down && hitPlatform) {
 			player.body.velocity.y -= isChicken ? 750 : 600; // TODO use impulse instead
 		}
+
+		// Gravity
+		player.body.gravity.y = isChicken ? 200 : 2000;
 
         // Transform
         if(transform.isDown && lastTransform + cooldown < this.time.now) {
