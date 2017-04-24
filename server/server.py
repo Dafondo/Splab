@@ -6,9 +6,8 @@ import flask as f
 import random as r
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret!'
 
-socketio = SocketIO(app, ping_timeout=1000)
+socketio = SocketIO(app)
 
 small_world_size = 500
 medium_world_size = 1000
