@@ -20,7 +20,7 @@ Splab.Preload.prototype = {
         this.game.load.spritesheet('allwalk', 'assets/sprites/allwalk.png', 32, 32, 16)
 		this.game.load.image('splab1', 'assets/sprites/splab1.png');
 		this.game.load.image('splabfloor', 'assets/sprites/splabfloor.png');
-        this.load.image('background','assets/sprites/black.jpg');
+        this.load.image('background','assets/sprites/starry.png');
 
 	},
     register: function() {
@@ -66,6 +66,6 @@ Splab.Preload.prototype = {
 		this.register();
 	},
 	create: function() {
-		/*this.state.start('MainMenu');*/
+		/*this.state.start('MainGame');*/
 	}
 };

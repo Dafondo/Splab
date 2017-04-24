@@ -32,12 +32,13 @@ Splab.MainGame.prototype = {
 
 	},
 	create: function() {
+		stars = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
         background = this.add.tileSprite(0, 0, 2048, 128, 'splab1');
 		background.scale.setTo(4);
 		background.smoothed = false;
-		/*floor = this.make.sprite(0, 0, 'splabfloor');
+		floor = this.make.sprite(0, 0, 'splabfloor');
 		floor.smoothed = false;
-		background.addChild(floor);*/
+		background.addChild(floor);
 
         this.world.setBounds(0, 0, 2048, 512);
 
