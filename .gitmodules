@@ -1,6 +1,3 @@
-[submodule "plugins/phaser-input\\"]
-	path = plugins/phaser-input\\
-	url = git@github.com:https://github.com/orange-games/phaser-input.git
 [submodule "plugins/phaser-input"]
 	path = plugins/phaser-input
 	url = https://github.com/orange-games/phaser-input.git
