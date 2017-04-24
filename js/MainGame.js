@@ -160,10 +160,28 @@ Splab.MainGame.prototype = {
 		// Move with arrow keys
 		if (cursors.left.isDown) {
 			/*player.body.velocity.x = -200*speed;*/
+			if(starSpeed < 0) {
+				starSpeed *= -1;
+			}
+			if(bgSpeed < 0) {
+				bgSpeed *= -1;
+			}
+			stars.autoScroll(starSpeed, 0);
+			background.autoScroll(bgSpeed, 0);
+
             player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
 			/*player.body.velocity.x = 200*speed;*/
+			if(starSpeed > 0) {
+				starSpeed *= -1;
+			}
+			if(bgSpeed > 0) {
+				bgSpeed *= -1;
+			}
+			stars.autoScroll(starSpeed, 0);
+			background.autoScroll(bgSpeed, 0);
+
             player.scale.x = 4;
 		}
 
