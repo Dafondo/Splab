@@ -4,8 +4,11 @@ var Splab = Splab || {};
 var cursors;
 var key_jump;
 var transform;
+var key_run;
 
 var speed = 1;
+
+var isChicken = false;
 
 // Sprites
 var stars;
@@ -17,6 +20,12 @@ var guyhair;
 var girlhair;
 
 // Animations
+var sciwalk;
+var cwalk;
+var faceBounce;
+var guyhairBounce;
+var girlhairBounce;
+var shirtBounce;
 var sciFPS = 12;
 var cFPS = 24;
 var starSpeed = -10;
@@ -35,6 +44,34 @@ Splab.MainGame.prototype = {
 
 	preload: function() {
 
+	},
+	startRun: function() {
+		sciFPS *= 2;
+		cFPS *= 2;
+		starSpeed *= 1.5;
+		bgSpeed *= 2;
+		stars.autoScroll(starSpeed, 0);
+		background.autoScroll(bgSpeed, 0);
+		sciwalk.speed *= 2;
+		cwalk.speed *= 2;
+		faceBounce.speed *= 2;
+		guyhairBounce.speed *= 2;
+		girlhairBounce.speed *= 2;
+		shirtBounce.speed *= 2;
+	},
+	endRun: function() {
+		sciFPS /= 2;
+		cFPS /= 2;
+		starSpeed /= 1.5;
+		bgSpeed /= 2;
+		stars.autoScroll(starSpeed, 0);
+		background.autoScroll(bgSpeed, 0);
+		sciwalk.speed /= 2;
+		cwalk.speed /= 2;
+		faceBounce.speed /= 2;
+		guyhairBounce.speed /= 2;
+		girlhairBounce.speed /= 2;
+		shirtBounce.speed /= 2;
 	},
 	create: function() {
 		stars = this.add.tileSprite(0, 0, 2048, this.game.height, 'background');
@@ -108,7 +145,7 @@ Splab.MainGame.prototype = {
         shirt.animations.play('bounce', sciFPS, true);
 
 		// Player physics
-		player.body.bounce.y = 0.2;
+		player.body.bounce.y = 0;
 		player.body.gravity.y = 800;
 		player.body.collideWorldBounds = true;
         /*player.body.velocity.x = 200;*/
@@ -130,16 +167,15 @@ Splab.MainGame.prototype = {
 		var ledges = [ platforms.create(400, 400, 'platform'), platforms.create(-150, 250, 'platform') ];
 		ledges.forEach((ledge) => ledge.body.immovable = true);*/
 
-
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         transform = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
-
+		key_run = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+		key_run.onDown.add(this.startRun, this);
+		key_run.onUp.add(this.endRun, this);
 
         this.camera.follow(player);
-
-
 	},
     transformBack: function() {
         face.tint = Math.random() * 0xffffff;
@@ -165,6 +201,7 @@ Splab.MainGame.prototype = {
 		stars.autoScroll(starSpeed, 0);
 		background.autoScroll(bgSpeed, 0);
 
+		isChicken = false;
     },
 	update: function() {
         // Check collisions
@@ -201,8 +238,8 @@ Splab.MainGame.prototype = {
 		}
 
 		// Jump
-		if (key_jump.isDown) {
-			player.body.velocity.y -= 100; // TODO use impulse instead
+		if (key_jump.isDown && player.body.touching.down && hitPlatform) {
+			player.body.velocity.y -= isChicken ? 750 : 600; // TODO use impulse instead
 		}
 
         // Transform
@@ -226,6 +263,8 @@ Splab.MainGame.prototype = {
 			/*player.body.velocity.x *= speed;*/
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
 			lastTransform = this.time.now + transformTime * 1000;
+			
+			isChicken = true;
         }
 	}
 }
