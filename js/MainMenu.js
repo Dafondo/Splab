@@ -13,33 +13,22 @@ Splab.MainMenu.prototype = {
 		this.state.start('MainGame');
 	},
     sendInfo: function() {
-        if (Splab.game.global.roomState == "empty") {
+        console.log("hii");
+        if (Splab.game.global.roomState === "empty") {
+            console.log("HIIII");
             Splab.game.global.socket.emit('create', {'uname': username.value,
                                                      'capacity': parseInt(capacity.value, 10),
                                                      'size': size.value});
 
-            Splab.game.global.socket.on('created', function(data) {
-                // FIXME fix something wrong..
-                console.log(data);
-                Splab.game.global.myID = 0;
-                Splab.game.global.capacity = data.capacity;
-                Splab.game.global.users.push(data.uname);
-                Splab.game.global.size = data.size;
-                Splab.game.state.start('WaitScreen');
-            });
+            console.log({'uname': username.value,
+                                                     'capacity': parseInt(capacity.value, 10),
+                                                     'size': size.value});
+
         }
         else {
             // this is on join then!
             Splab.game.global.socket.emit('join', username.value);
-
-            Splab.game.global.socket.on('joined', function(data) {
-                console.log(data);
-                Splab.game.global.capacity = data.capacity;
-                Splab.game.global.size = data.size;
-                Splab.game.global.users = data.current_users;
-                console.log(Splab.game.global);
-                Splab.game.state.start('WaitScreen');
-            });
+            console.log(username.value);
         }
     },
 	init: function() {

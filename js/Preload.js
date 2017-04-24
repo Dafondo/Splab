@@ -25,13 +25,13 @@ Splab.Preload.prototype = {
 	},
     register: function() {
         // register current client with server
-        Splab.game.global.socket = io.connect("http://localhost:5000");
-        Splab.game.global.socket.on('connection', function(data) {
-            console.log(data);
-            Splab.game.global.roomState = data.state;
-            console.log(Splab.game.global);
-            Splab.game.state.start("MainMenu");
-        });
+        //Splab.game.global.socket = io.connect(Splab.game.global.serverAddr, {'forceNew':true });
+        //Splab.game.global.socket.on('connection', function(data) {
+        //    console.log(data);
+        //    Splab.game.global.roomState = data.state;
+        //    console.log(Splab.game.global);
+        //    Splab.game.state.start("MainMenu");
+        //});
     },
     loadStart: function() {
         text.setText("Loading ...");
@@ -63,9 +63,8 @@ Splab.Preload.prototype = {
 	},
 	preload: function() {
 		this.loadAssets();
-		this.register();
 	},
 	create: function() {
-		// this.state.start('WaitScreen');
+		this.state.start('MainMenu');
 	}
 };
