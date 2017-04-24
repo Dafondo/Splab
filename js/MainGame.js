@@ -20,6 +20,7 @@ var guyhair;
 var girlhair;
 
 // Animations
+var cloudEmitter;
 var sciwalk;
 var cwalk;
 var faceBounce;
@@ -148,18 +149,14 @@ Splab.MainGame.prototype = {
 		player.body.bounce.y = 0;
 		player.body.gravity.y = 800;
 		player.body.collideWorldBounds = true;
-        /*player.body.velocity.x = 200;*/
-
-		// Player animations
-		// player.animations.add('left', [0, 1, 2, 3], 10, true);
-		// player.animations.add('right', [5, 6, 7, 8], 10, true);
 
 		// Create platforms that the player can walk on
 		platforms = this.game.add.group();
 		platforms.enableBody = true;
-		ground = [platforms.create(0, this.game.world.height - 20, 'splabfloor'), platforms.create(512, this.game.world.height - 20, 'splabfloor'), platforms.create(1024, this.game.world.height - 20, 'splabfloor'), platforms.create(1536, this.game.world.height - 20, 'splabfloor')];
+		ground = [platforms.create(0, this.game.world.height - 10, 'splabfloor'), platforms.create(512, this.game.world.height - 10, 'splabfloor'), platforms.create(1024, this.game.world.height - 10, 'splabfloor'), platforms.create(1536, this.game.world.height - 10, 'splabfloor')];
 		ground.forEach((tile) => tile.scale.setTo(4));
 		ground.forEach((tile) => tile.body.immovable = true);
+
 		// Create ground and platforms
 		/*var ground = platforms.create(0, this.game.world.height - 64, 'platform');
 		ground.scale.setTo(2, 2); // scale to width of the game
@@ -194,7 +191,6 @@ Splab.MainGame.prototype = {
         shirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
-		/*player.body.velocity.x /= speed;*/
         starSpeed /= 1.5;
 		bgSpeed /= 2;
 
@@ -206,31 +202,19 @@ Splab.MainGame.prototype = {
 	update: function() {
         // Check collisions
         var hitPlatform = game.physics.arcade.collide(player, platforms);
-		// Reset velocity to zero
-		// player.body.velocity.x = 0;
 
 		// Move with arrow keys
 		if (cursors.left.isDown) {
-			/*player.body.velocity.x = -200*speed;*/
-			if(starSpeed < 0) {
-				starSpeed *= -1;
-			}
-			if(bgSpeed < 0) {
-				bgSpeed *= -1;
-			}
+			if(starSpeed < 0) starSpeed *= -1;
+			if(bgSpeed < 0)	bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
 			background.autoScroll(bgSpeed, 0);
 
             player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
-			/*player.body.velocity.x = 200*speed;*/
-			if(starSpeed > 0) {
-				starSpeed *= -1;
-			}
-			if(bgSpeed > 0) {
-				bgSpeed *= -1;
-			}
+			if(starSpeed > 0) starSpeed *= -1;
+			if(bgSpeed > 0) bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
 			background.autoScroll(bgSpeed, 0);
 
@@ -248,7 +232,7 @@ Splab.MainGame.prototype = {
             guyhair.alpha = 0;
             girlhair.alpha = 0;
             shirt.alpha = 0;
-            // player.animations.stop();
+
             player.animations.play('cwalk', cFPS, true);
             face.animations.stop();
             guyhair.animations.stop();
@@ -260,10 +244,9 @@ Splab.MainGame.prototype = {
 			stars.autoScroll(starSpeed, 0);
 			background.autoScroll(bgSpeed, 0);
 
-			/*player.body.velocity.x *= speed;*/
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
 			lastTransform = this.time.now + transformTime * 1000;
-			
+
 			isChicken = true;
         }
 	}

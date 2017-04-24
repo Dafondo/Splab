@@ -17,7 +17,7 @@ Splab.MainMenu.prototype = {
             Splab.game.global.socket.emit('create', {'uname': username.value,
                                                      'capacity': parseInt(capacity.value, 10),
                                                      'size': size.value});
-           
+
             Splab.game.global.socket.on('created', function(data) {
                 // FIXME fix something wrong..
                 console.log(data);

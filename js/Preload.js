@@ -12,13 +12,13 @@ Splab.Preload.prototype = {
 		this.game.load.image('c', 'assets/sprites/c.png');
 		this.game.load.image('platform', 'assets/sprites/platform.png');
         this.game.load.spritesheet('cflap', 'assets/sprites/cflap.png', 32, 32, 8);
-        this.game.load.spritesheet('girlhair', 'assets/sprites/girlhair.png', 32, 32, 8);
-        this.game.load.spritesheet('guyhair', 'assets/sprites/guyhair.png', 32, 32, 8);
+        this.game.load.spritesheet('girlhair', 'assets/sprites/girlhair.png?v=1', 32, 32, 8);
+        this.game.load.spritesheet('guyhair', 'assets/sprites/guyhair.png?v=1', 32, 32, 8);
         this.game.load.spritesheet('sciwalk', 'assets/sprites/sciwalk.png', 32, 32, 8);
         this.game.load.spritesheet('sciface', 'assets/sprites/sciface.png', 32, 32, 8);
         this.game.load.spritesheet('scishirt', 'assets/sprites/scishirt.png', 32, 32, 8);
         this.game.load.spritesheet('allwalk', 'assets/sprites/allwalk.png', 32, 32, 16)
-		this.game.load.image('splab1', 'assets/sprites/splab1a.png');
+		this.game.load.image('splab1', 'assets/sprites/splab1a.png?v=1');
 		this.game.load.image('splabfloor', 'assets/sprites/splabfloor.png');
         this.load.image('background','assets/sprites/starry.png');
 
@@ -66,6 +66,6 @@ Splab.Preload.prototype = {
 		this.register();
 	},
 	create: function() {
-		/*this.state.start('MainGame');*/
+		// this.state.start('WaitScreen');
 	}
 };
