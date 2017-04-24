@@ -30,8 +30,13 @@ Splab.Preload.prototype = {
             console.log(data);
             Splab.game.global.roomState = data.state;
             console.log(Splab.game.global);
-            Splab.game.state.start("MainMenu");
         });
+        Splab.game.global.socket.on('start', function(data) {
+            console.log('start!');
+            console.log(data);
+            Splab.game.state.start('MainGame');
+        });
+ 
     },
     loadStart: function() {
         text.setText("Loading ...");
@@ -55,6 +60,7 @@ Splab.Preload.prototype = {
     loadComplete: function() {
         text.setText("Load Complete");
         console.log("chicken chicken");
+        Splab.game.state.start("MainMenu");
     },
 	init: function() {
         this.load.onLoadStart.add(this.loadStart, this);

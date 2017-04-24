@@ -14,6 +14,7 @@ Splab.game.global = {
     size: null
 };
 
+
 // Add game states
 Splab.game.state.add('Boot', Splab.Boot);
 Splab.game.state.add('Preload', Splab.Preload);

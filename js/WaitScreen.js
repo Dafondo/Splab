@@ -10,8 +10,13 @@ Splab.WaitScreen.prototype = {
 
     },
     preload: function() {
-
-    },
+        console.log("HIIIII");
+        Splab.game.global.socket.on('join', function(data) {
+            console.log(data.uname + " has joined");
+            Splab.game.global.users.push(data.uname);
+            playersText.text = "Players joined: " + Splab.game.global.users.length + "/" + Splab.game.global.capacity;
+        });
+   },
     create: function() {
         text = "Players joined: " + Splab.game.global.users.length + " / " + Splab.game.global.capacity
         var style = { font: "12px Arial", fill: "#fff" };
@@ -28,12 +33,5 @@ Splab.WaitScreen.prototype = {
         sizeText.strokeThickness = 2;
     },
     update: function() {
-        Splab.game.global.socket.on('playerjoined', function(data) {
-            Splab.game.global.users.push(data.uname);
-            playersText.text = "Players joined: " + Splab.game.global.users.length + " / " + Splab.game.global.capacity;
-        });
-        if(Splab.game.global.users.length == Splab.game.global.capacity) {
-            this.state.start("MainGame", true, false);
-        }
     }
 }
