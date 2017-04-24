@@ -1,6 +1,6 @@
 var Splab = Splab || {};
 
-var game = Splab.game = new Phaser.Game(2048, 512, Phaser.CANVAS);
+var game = Splab.game = new Phaser.Game(512, 512, Phaser.CANVAS);
 
 Phaser.Canvas.setSmoothingEnabled(this, false);
 

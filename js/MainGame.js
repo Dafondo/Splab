@@ -8,6 +8,8 @@ var transform;
 var speed = 1;
 
 // Sprites
+var stars;
+var background;
 var player;
 var platforms;
 var face;
@@ -16,6 +18,8 @@ var hair;
 // Animations
 var sciFPS = 12;
 var cFPS = 24;
+var starSpeed = -10;
+var bgSpeed = -20;
 
 // Timers
 var transformTime = 3;
@@ -32,11 +36,16 @@ Splab.MainGame.prototype = {
 
 	},
 	create: function() {
-		stars = this.add.tileSprite(0, 0, this.game.width, this.game.height, 'background');
+		stars = this.add.tileSprite(0, 0, 2048, this.game.height, 'background');
+		stars.autoScroll(starSpeed, 0);
         background = this.add.tileSprite(0, 0, 2048, 128, 'splab1');
 		background.scale.setTo(4);
 		background.smoothed = false;
+		background.autoScroll(bgSpeed, 0);
+
+		// Don't know why, but don't remove this
 		floor = this.make.sprite(0, 0, 'splabfloor');
+		floor.alpha = 0;
 		floor.smoothed = false;
 		background.addChild(floor);
 
@@ -48,7 +57,7 @@ Splab.MainGame.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Create player body
-		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'allwalk');
+		player = this.game.add.sprite(game.world.centerX, this.game.world.height - 100, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
@@ -90,7 +99,7 @@ Splab.MainGame.prototype = {
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 800;
 		player.body.collideWorldBounds = true;
-        player.body.velocity.x = 200;
+        /*player.body.velocity.x = 200;*/
 
 		// Player animations
 		// player.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -115,6 +124,7 @@ Splab.MainGame.prototype = {
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
         transform = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
 
+
         this.camera.follow(player);
 
 
@@ -133,8 +143,13 @@ Splab.MainGame.prototype = {
         shirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
-		player.body.velocity.x /= speed;
-        speed = 1;
+		/*player.body.velocity.x /= speed;*/
+        starSpeed /= 1.5;
+		bgSpeed /= 2;
+
+		stars.autoScroll(starSpeed, 0);
+		background.autoScroll(bgSpeed, 0);
+
     },
 	update: function() {
         // Check collisions
@@ -144,11 +159,11 @@ Splab.MainGame.prototype = {
 
 		// Move with arrow keys
 		if (cursors.left.isDown) {
-			player.body.velocity.x = -200*speed;
+			/*player.body.velocity.x = -200*speed;*/
             player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
-			player.body.velocity.x = 200*speed;
+			/*player.body.velocity.x = 200*speed;*/
             player.scale.x = 4;
 		}
 
@@ -167,8 +182,13 @@ Splab.MainGame.prototype = {
             face.animations.stop();
             hair.animations.stop();
             shirt.animations.stop();
-            speed = 2;
-			player.body.velocity.x *= speed;
+
+			starSpeed *= 1.5;
+			bgSpeed *= 2;
+			stars.autoScroll(starSpeed, 0);
+			background.autoScroll(bgSpeed, 0);
+
+			/*player.body.velocity.x *= speed;*/
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
 			lastTransform = this.time.now + transformTime * 1000;
         }
