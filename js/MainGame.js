@@ -17,6 +17,11 @@ var hair;
 var sciFPS = 12;
 var cFPS = 24;
 
+// Timers
+var transformTime = 3;
+var lastTransform = 0;
+var cooldown = 3000;
+
 Splab.MainGame = function(){};
 
 Splab.MainGame.prototype = {
@@ -115,7 +120,7 @@ Splab.MainGame.prototype = {
         hair.animations.play('bounce', sciFPS, true);
         shirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
-        
+
         speed = 1;
     },
 	update: function() {
@@ -140,7 +145,7 @@ Splab.MainGame.prototype = {
 		}
 
         // Transform
-        if(transform.isDown) {
+        if(transform.isDown && lastTransform + cooldown < this.time.now) {
             face.alpha = 0;
             hair.alpha = 0;
             shirt.alpha = 0;
@@ -150,7 +155,8 @@ Splab.MainGame.prototype = {
             hair.animations.stop();
             shirt.animations.stop();
             speed = 2;
-            this.time.events.add(Phaser.Timer.SECOND * 3, this.transformBack, this);
+            this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
+			lastTransform = this.time.now + transformTime * 1000;
         }
 
 
