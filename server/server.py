@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask
 from flask_socketio import SocketIO, emit, send
 import pprint
 import json
@@ -6,8 +6,7 @@ import flask as f
 import random as r
 
 app = Flask(__name__)
-
-socketio = SocketIO(app)
+socketio = SocketIO(app, engineio_logger=True, ping_timeout=1000)
 
 small_world_size = 500
 medium_world_size = 1000
@@ -73,7 +72,8 @@ def create_game(data):
     state = {}
     state['capacity'] = data['capacity']
     state['size'] = data['size']
-    if state['size'] == 'small': # TODO init sizes and shit
+
+    if state['size'] == 'small':
         state['world_size'] = small_world_size
         state['npc_alive'] = small_npc_count
     elif state['size'] == 'medium':
@@ -86,13 +86,11 @@ def create_game(data):
     state['npcs'] = []
     state['npcs_init'] = []
     for i in xrange(state['npc_alive']):
-
-        # NPC schema
         state['npcs'].append(gen_npc())
-
         state['npcs_init'].append(r.randint(0, state['world_size']))
 
     state['players'] = []
+    state['players_init'] = []
 
     # Player schema
     state['players'].append(gen_player(data['uname'], 0))
