@@ -1,6 +1,8 @@
 var Splab = Splab || {};
 
-var game = Splab.game = new Phaser.Game(800, 512, Phaser.AUTO);
+var game = Splab.game = new Phaser.Game(2048, 512, Phaser.CANVAS);
+
+Phaser.Canvas.setSmoothingEnabled(this, false);
 
 Splab.game.global = {
     menuMusic: null,

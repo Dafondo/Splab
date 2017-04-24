@@ -32,22 +32,28 @@ Splab.MainGame.prototype = {
 
 	},
 	create: function() {
-        // this.add.tileSprite(0, 0, 1920, 1920, 'background');
+        background = this.add.tileSprite(0, 0, 2048, 128, 'splab1');
+		background.scale.setTo(4);
+		background.smoothed = false;
+		/*floor = this.make.sprite(0, 0, 'splabfloor');
+		floor.smoothed = false;
+		background.addChild(floor);*/
 
-        this.world.setBounds(0, 0, 1920, 1920);
+        this.world.setBounds(0, 0, 2048, 512);
 
         this.stage.backgroundColor = '#ffffff';
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
-		// Create player
+		// Create player body
 		player = this.game.add.sprite(game.world.centerX-48, this.game.world.height - 200, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
 		this.game.physics.arcade.enable(player);
 
+		// Create player components
         face = this.make.sprite(0, 0, 'sciface');
         face.anchor.set(0.5, 0.5);
         face.smoothed = false;
@@ -66,16 +72,19 @@ Splab.MainGame.prototype = {
         shirt.tint = Math.random() * 0xffffff;
         player.addChild(shirt);
 
+		// Create animations
         sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
         cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
         faceBounce = face.animations.add('bounce');
         hairBounce = hair.animations.add('bounce');
         shirtBounce = shirt.animations.add('bounce');
 
+		// Play animations
         player.animations.play('sciwalk', sciFPS, true);
         face.animations.play('bounce', sciFPS, true);
         hair.animations.play('bounce', sciFPS, true);
         shirt.animations.play('bounce', sciFPS, true);
+
 		// Player physics
 		player.body.bounce.y = 0.2;
 		player.body.gravity.y = 800;
@@ -89,13 +98,15 @@ Splab.MainGame.prototype = {
 		// Create platforms that the player can walk on
 		platforms = this.game.add.group();
 		platforms.enableBody = true;
-
+		ground = [platforms.create(0, this.game.world.height - 20, 'splabfloor'), platforms.create(512, this.game.world.height - 20, 'splabfloor'), platforms.create(1024, this.game.world.height - 20, 'splabfloor'), platforms.create(1536, this.game.world.height - 20, 'splabfloor')];
+		ground.forEach((tile) => tile.scale.setTo(4));
+		ground.forEach((tile) => tile.body.immovable = true);
 		// Create ground and platforms
-		var ground = platforms.create(0, this.game.world.height - 64, 'platform');
+		/*var ground = platforms.create(0, this.game.world.height - 64, 'platform');
 		ground.scale.setTo(2, 2); // scale to width of the game
 		ground.body.immovable = true;
 		var ledges = [ platforms.create(400, 400, 'platform'), platforms.create(-150, 250, 'platform') ];
-		ledges.forEach((ledge) => ledge.body.immovable = true);
+		ledges.forEach((ledge) => ledge.body.immovable = true);*/
 
 
 		// Create cursor keys
@@ -121,6 +132,7 @@ Splab.MainGame.prototype = {
         shirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
+		player.body.velocity.x /= speed;
         speed = 1;
     },
 	update: function() {
@@ -155,11 +167,9 @@ Splab.MainGame.prototype = {
             hair.animations.stop();
             shirt.animations.stop();
             speed = 2;
+			player.body.velocity.x *= speed;
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
 			lastTransform = this.time.now + transformTime * 1000;
         }
-
-
-
 	}
 }
