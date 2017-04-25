@@ -52,7 +52,7 @@ state = None
 
 def debug(debug_str):
     if app.debug:
-        print "DEBUG -- " + debug_str
+        print("DEBUG -- " + debug_str)
 
 @socketio.on('connect')
 def query_state():
