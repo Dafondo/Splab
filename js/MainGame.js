@@ -281,12 +281,16 @@ Splab.MainGame.prototype = {
                 face.tint = Math.random() * 0xffffff;
                 npc.addChild(face);
 
+		        shirtBounce = shirt.animations.add('bounce');
+
+
                 if (npcProperties[i].appearance.hair == 0) {
                     var guyhair = this.make.sprite(0, 0, 'guyhair');
                     guyhair.anchor.set(0.5, 0.5);
                     guyhair.smoothed = false;
                     guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
                     npc.addChild(guyhair);
+					guyhair.animations.add('bounce');
                     guyhair.animations.play('bounce', sciFPS, true);
                 }
                 else {
@@ -294,7 +298,7 @@ Splab.MainGame.prototype = {
                     girlhair.anchor.set(0.5, 0.5);
                     girlhair.smoothed = false;
                     girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-
+					girlhair.animations.add('bounce');
                     girlhair.animations.play('bounce', sciFPS, true);
                     npc.addChild(girlhair);
                 }
@@ -306,6 +310,9 @@ Splab.MainGame.prototype = {
                 npc.addChild(shirt);
 
                 this.game.physics.arcade.enable(npc);
+		        face.animations.add('bounce');
+				shirt.animations.add('bounce');
+				npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
                 face.animations.play('bounce', sciFPS, true);
                 shirt.animations.play('bounce', sciFPS, true);
                 npc.animations.play('sciwalk', sciFPS, true);
