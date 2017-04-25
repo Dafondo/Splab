@@ -8,9 +8,9 @@ import random as r
 app = Flask(__name__)
 socketio = SocketIO(app, engineio_logger=True, ping_timeout=1000)
 
-small_world_size = 500
-medium_world_size = 1000
-large_world_size = 1500
+small_world_size = 512
+medium_world_size = 1024
+large_world_size = 1536
 
 small_npc_count = 50
 medium_npc_count = 100
@@ -19,13 +19,11 @@ large_npc_count = 150
 shirt_types = 9
 hair_types = 1
 hair_colors = 19
-glasses = 1
 
 def gen_random_appearance():
     return {'shirt': r.randint(0, shirt_types),
             'hair': r.randint(0, hair_types),
-            'hair_color': r.randint(0, hair_types),
-            'glasses': r.randint(0, glasses)}
+            'hair_color': r.randint(0, hair_types)}
 
 def gen_npc():
     return {'alive': True,

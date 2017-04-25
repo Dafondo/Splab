@@ -39,14 +39,48 @@ var transformTime = 3;
 var lastTransform = 0;
 var cooldown = 3000;
 
+var viewWindowSize = 512;
+var myPos;
+var worldSize;
+var npcLocs = []
+var npcProperties = []
+var playerLocs = []
+var playerInfo = []
+var myInfo;
+
+var shirtColors = ['#FF0000', '#00FFFF', '#0000FF', '#008000', '#FFA500',
+                   '#808080', '#000000', '#800000', '#0000A0', '#FFFF00']
+
+var hairColors = ['#090806', '#2C222B', '#71635A', '#B7A69E', '#D6C4C2',
+                  '#CABFB1', '#DCD0BA', '#6A4E42', '#E6CEA8', '#E5C8A8',
+                  '#DEBC99', '#B89778', '#A56B46', '#B55239', '#8D4A43',
+                  '#91553D', '#A7856A', '#3B3024', '#554838', '#4E433F']
+
+var walkSpeed = 1;
+var runSpeed = 2;
+
 Splab.MainGame = function(){};
 
 Splab.MainGame.prototype = {
 	init: function() {
+	    npcLocs = Splab.game.global.state.npcs_init;
+	    npcProperties = Splab.game.global.state.npcs;
+
+	    for (var i = 0 ; i < Splab.game.global.state.players.length ; i++) {
+            if (Splab.game.global.state.players[i].id == Splab.game.global.myID) {
+                myInfo = Splab.game.global.state.players[i];
+                myPos = Splab.game.global.state.players_init[i];
+            }
+            else { // other players info stored separately
+                playerInfo.push(Splab.game.global.state.players[i]);
+                playerLocs.push(Splab.game.global.state.players_init[i]);
+            }
+        }
+
+        worldSize = Splab.game.global.state.world_size;
 	},
 
 	preload: function() {
-
 	},
 	startRun: function() {
 		sciFPS *= 2;
@@ -209,6 +243,75 @@ Splab.MainGame.prototype = {
 		isChicken = false;
     },
 	update: function() {
+	    // draw all npcs / other players
+	    var relativeNPCLocs = npcLocs.map(function(l) {
+            return (l - myPos) % worldSize;
+        });
+
+        for (var i = 0 ; i < npcLocs.length ; i++) {
+            if ((relativeNPCLocs[i] >= 0 && relativeNPCLocs[i] <= 256) ||
+                (relativeNPCLocs[i] >= 256 && relativeNPCLocs <= 512)) {
+                // we render this npc
+                var adjustedLoc = relativeNPCLocs[i];
+                if (adjustedLoc >= 256) {
+                    adjustedLoc -= 512;
+                }
+                console.log(adjustedLoc);
+                var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height-100, 'allwalk');
+                npc.anchor.set(0.5, 0.5);
+                npc.smoothed = false;
+                if (npcProperties[i].facing) {
+                    npc.scale.setTo(4);
+                }
+                else {
+                    npc.scale.setTo(-4);
+                }
+
+                face = this.make.sprite(0, 0, 'sciface');
+                face.anchor.set(0.5, 0.5);
+                face.smoothed = false;
+                face.tint = Math.random() * 0xffffff;
+                npc.addChild(face);
+
+                if (npcProperties[i].appearance.hair == 0) {
+                    guyhair = this.make.sprite(0, 0, 'guyhair');
+                    guyhair.anchor.set(0.5, 0.5);
+                    guyhair.smoothed = false;
+                    guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                    npc.addChild(guyhair);
+                }
+                else {
+                    girlhair = this.make.sprite(0, 0, 'girlhair');
+                    girlhair.anchor.set(0.5, 0.5);
+                    girlhair.smoothed = false;
+                    girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                    npc.addChild(girlhair);
+                }
+
+                shirt = this.make.sprite(0, 0, 'scishirt');
+                shirt.anchor.set(0.5, 0.5);
+                shirt.smoothed = false;
+                shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
+                npc.addChild(shirt);
+
+                this.game.physics.arcade.enable(npc);
+            }
+        }
+
+
+        // moveeeee!
+        for (var i = 0 ; i < npcLocs.length ; i++) {
+            var speed = walkSpeed;
+            if (npcProperties[i].running) {
+                speed = runSpeed;
+            }
+            if (!npcProperties[i].facing) {
+                speed = -1 * speed;
+            }
+
+            npcLocs[i] = (npcLocs[i] + speed) % worldSize;
+        }
+
         // Check collisions
         var hitPlatform = game.physics.arcade.collide(player, platforms);
 

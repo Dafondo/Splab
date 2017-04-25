@@ -36,6 +36,7 @@ Splab.Preload.prototype = {
         Splab.game.global.socket.on('start', function(data) {
             console.log('start!');
             console.log(data);
+            Splab.game.global.state = data;
             Splab.game.state.start('MainGame');
         });
 

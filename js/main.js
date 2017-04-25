@@ -11,7 +11,8 @@ Splab.game.global = {
     myID: -1,
     capacity: -1,
     users: [],
-    size: null
+    size: null,
+    state: null // state of entire game, set at start
 };
 
 

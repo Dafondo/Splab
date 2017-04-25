@@ -37,6 +37,7 @@ Splab.MainMenu.prototype = {
                 Splab.game.global.capacity = data.capacity;
                 Splab.game.global.size = data.size;
                 Splab.game.global.users = data.current_users;
+                Splab.game.global.myID = data.current_users.length - 1;
                 console.log(Splab.game.global);
                 Splab.game.state.start('WaitScreen');
             });
