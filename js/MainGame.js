@@ -205,10 +205,13 @@ Splab.MainGame.prototype = {
 
         chickenBar = this.add.group();
         for (var i = 0; i < transformTime; i++) {
-            chickenBar.create(this.world.centerX - 256 + i*32, 0, 'c');
+            chickenBar.create(i*24 - player.width/2, player.height/2 * -1, 'c');
         };
 
         chickenBar.alpha = 0;
+        chickenBar.scale.set(0.25);
+
+        player.addChild(chickenBar);
 
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
