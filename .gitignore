@@ -1,1 +1,4 @@
 .*.un~
+server/
+launch-simple-server.sh
+*.DS_Store
