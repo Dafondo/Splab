@@ -5,6 +5,7 @@ var Splab = Splab || {};
 Splab.Preload = function() {};
 
 var text;
+var waitLoop;
 
 Splab.Preload.prototype = {
 	loadAssets: function() {
@@ -60,10 +61,16 @@ Splab.Preload.prototype = {
             y += 332;
         }
     },
+	startMainMenu: function() {
+		if(Splab.game.global.roomState != null) {
+			this.time.events.remove(waitLoop);
+			this.state.start('MainMenu');
+		}
+	},
     loadComplete: function() {
         text.setText("Load Complete");
         console.log("chicken chicken");
-        Splab.game.state.start("MainMenu");
+        if(Splab.game.global.roomState == null) waitLoop = this.time.events.loop(100, this.startMainMenu, this);
     },
 	init: function() {
         this.load.onLoadStart.add(this.loadStart, this);
