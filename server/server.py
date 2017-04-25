@@ -12,9 +12,9 @@ small_world_size = 512
 medium_world_size = 1024
 large_world_size = 1536
 
-small_npc_count = 50
-medium_npc_count = 100
-large_npc_count = 150
+small_npc_count = 5
+medium_npc_count = 10
+large_npc_count = 20
 
 shirt_types = 9
 hair_types = 1
@@ -56,11 +56,13 @@ def debug(debug_str):
 
 @socketio.on('connect')
 def query_state():
+    global state
     debug("CONNECTION")
     if state == None:
         emit('connection', {'state': 'empty'})
     elif len(state['players']) == state['capacity']:
-        emit('connection', {'state': 'full'})
+        state = None
+        emit('connection', {'state': 'empty'})
     else:
         emit('connection', {'state': 'waiting'})
 
