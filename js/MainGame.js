@@ -145,47 +145,47 @@ Splab.MainGame.prototype = {
 		this.game.physics.arcade.enable(player);
 
 		// Create player components
-        face = this.make.sprite(0, 0, 'sciface');
-        face.anchor.set(0.5, 0.5);
-        face.smoothed = false;
-        face.tint = Math.random() * 0xffffff;
-        player.addChild(face);
+        playerface = this.make.sprite(0, 0, 'sciface');
+        playerface.anchor.set(0.5, 0.5);
+        playerface.smoothed = false;
+        playerface.tint = Math.random() * 0xffffff;
+        player.addChild(playerface);
 
-        guyhair = this.make.sprite(0, 0, 'guyhair');
-        guyhair.anchor.set(0.5, 0.5);
-        guyhair.smoothed = false;
-        guyhair.tint = Math.random() * 0xffffff;
-        player.addChild(guyhair);
+        playerguyhair = this.make.sprite(0, 0, 'guyhair');
+        playerguyhair.anchor.set(0.5, 0.5);
+        playerguyhair.smoothed = false;
+        playerguyhair.tint = Math.random() * 0xffffff;
+        player.addChild(playerguyhair);
 
-        girlhair = this.make.sprite(0, 0, 'girlhair');
-        girlhair.anchor.set(0.5, 0.5);
-        girlhair.smoothed = false;
-        girlhair.tint = Math.random() * 0xffffff;
-        player.addChild(girlhair);
+        playergirlhair = this.make.sprite(0, 0, 'girlhair');
+        playergirlhair.anchor.set(0.5, 0.5);
+        playergirlhair.smoothed = false;
+        playergirlhair.tint = Math.random() * 0xffffff;
+        player.addChild(playergirlhair);
 
-        shirt = this.make.sprite(0, 0, 'scishirt');
-        shirt.anchor.set(0.5, 0.5);
-        shirt.smoothed = false;
-        shirt.tint = Math.random() * 0xffffff;
-        player.addChild(shirt);
+        playershirt = this.make.sprite(0, 0, 'scishirt');
+        playershirt.anchor.set(0.5, 0.5);
+        playershirt.smoothed = false;
+        playershirt.tint = Math.random() * 0xffffff;
+        player.addChild(playershirt);
 
-        if(Math.floor(Math.random() * 2) == 0) girlhair.alpha = 0;
-        else guyhair.alpha = 0;
+        if(Math.floor(Math.random() * 2) == 0) playergirlhair.alpha = 0;
+        else playerguyhair.alpha = 0;
 
 		// Create animations
         sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
         cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
-        faceBounce = face.animations.add('bounce');
-        guyhairBounce = guyhair.animations.add('bounce');
-        girlhairBounce = girlhair.animations.add('bounce');
-        shirtBounce = shirt.animations.add('bounce');
+        faceBounce = playerface.animations.add('bounce');
+        guyhairBounce = playerguyhair.animations.add('bounce');
+        girlhairBounce = playergirlhair.animations.add('bounce');
+        shirtBounce = playershirt.animations.add('bounce');
 
 		// Play animations
         player.animations.play('sciwalk', sciFPS, true);
-        face.animations.play('bounce', sciFPS, true);
-        guyhair.animations.play('bounce', sciFPS, true);
-        girlhair.animations.play('bounce', sciFPS, true);
-        shirt.animations.play('bounce', sciFPS, true);
+        playerface.animations.play('bounce', sciFPS, true);
+        playerguyhair.animations.play('bounce', sciFPS, true);
+        playergirlhair.animations.play('bounce', sciFPS, true);
+        playershirt.animations.play('bounce', sciFPS, true);
 
 		// Player physics
 		player.body.bounce.y = 0;
@@ -224,20 +224,20 @@ Splab.MainGame.prototype = {
         this.camera.follow(player);
 	},
     transformBack: function() {
-        face.tint = Math.random() * 0xffffff;
-        guyhair.tint = Math.random() * 0xffffff;
-        girlhair.tint = Math.random() * 0xffffff;
-        shirt.tint = Math.random() * 0xffffff;
+        playerface.tint = Math.random() * 0xffffff;
+        playerguyhair.tint = Math.random() * 0xffffff;
+        playergirlhair.tint = Math.random() * 0xffffff;
+        playershirt.tint = Math.random() * 0xffffff;
 
-        face.alpha = 1;
-        if(Math.floor(Math.random() * 2) == 0) guyhair.alpha = 1;
-        else girlhair.alpha = 1;
-        shirt.alpha = 1;
+        playerface.alpha = 1;
+        if(Math.floor(Math.random() * 2) == 0) playerguyhair.alpha = 1;
+        else playergirlhair.alpha = 1;
+        playershirt.alpha = 1;
 
-        face.animations.play('bounce', sciFPS, true);
-        guyhair.animations.play('bounce', sciFPS, true);
-        girlhair.animations.play('bounce', sciFPS, true);
-        shirt.animations.play('bounce', sciFPS, true);
+        playerface.animations.play('bounce', sciFPS, true);
+        playerguyhair.animations.play('bounce', sciFPS, true);
+        playergirlhair.animations.play('bounce', sciFPS, true);
+        playershirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
         starSpeed /= 1.5;
@@ -381,16 +381,16 @@ Splab.MainGame.prototype = {
 
         // Transform
         if(transform.isDown && lastTransform + cooldown < this.time.now) {
-            face.alpha = 0;
-            guyhair.alpha = 0;
-            girlhair.alpha = 0;
-            shirt.alpha = 0;
+            playerface.alpha = 0;
+            playerguyhair.alpha = 0;
+            playergirlhair.alpha = 0;
+            playershirt.alpha = 0;
 
             player.animations.play('cwalk', cFPS, true);
-            face.animations.stop();
-            guyhair.animations.stop();
-            girlhair.animations.stop();
-            shirt.animations.stop();
+            playerface.animations.stop();
+            playerguyhair.animations.stop();
+            playergirlhair.animations.stop();
+            playershirt.animations.stop();
 
 			starSpeed *= 1.5;
 			bgSpeed *= 2;
