@@ -30,7 +30,7 @@ Splab.Preload.prototype = {
 	},
     register: function() {
         // register current client with server
-        Splab.game.global.socket = io.connect("http://localhost:5000");
+        Splab.game.global.socket = io.connect("http://hatch01.cs.unc.edu:5000");
         Splab.game.global.socket.on('connection', function(data) {
             console.log(data);
             Splab.game.global.roomState = data.state;
