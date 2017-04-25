@@ -50,7 +50,8 @@ var myInfo;
 var npcs = []
 
 var currentFrame = 0;
-var currentUpdate = 0;
+var nextFrameTime = 0;
+var msPF = 1000/12;
 
 var shirtColors = ['0xFF0000', '0x00FFFF', '0x0000FF', '0x008000', '0xFFA500',
                    '0x808080', '0x000000', '0x800000', '0x0000A0', '0xFFFF00']
@@ -249,10 +250,11 @@ Splab.MainGame.prototype = {
 		isChicken = false;
     },
 	update: function() {
-	    if (currentUpdate++ === 5) {
-	        currentUpdate = 0;
-            currentFrame = (currentFrame + 1) % 8;
-        }
+		// Animation frame for players
+		if(this.time.now > nextFrameTime) {
+			currentFrame = (currentFrame + 1) % 8;
+			nextFrameTime = this.time.now + msPF;
+		}
 	    npcs.map(function(n) {n.destroy()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
