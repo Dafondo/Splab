@@ -49,13 +49,18 @@ var playerInfo = []
 var myInfo;
 var npcs = []
 
-var shirtColors = ['#FF0000', '#00FFFF', '#0000FF', '#008000', '#FFA500',
-                   '#808080', '#000000', '#800000', '#0000A0', '#FFFF00']
+var currentFrame = 0;
+var currentUpdate = 0;
 
-var hairColors = ['#090806', '#2C222B', '#71635A', '#B7A69E', '#D6C4C2',
-                  '#CABFB1', '#DCD0BA', '#6A4E42', '#E6CEA8', '#E5C8A8',
-                  '#DEBC99', '#B89778', '#A56B46', '#B55239', '#8D4A43',
-                  '#91553D', '#A7856A', '#3B3024', '#554838', '#4E433F']
+var shirtColors = ['0xFF0000', '0x00FFFF', '0x0000FF', '0x008000', '0xFFA500',
+                   '0x808080', '0x000000', '0x800000', '0x0000A0', '0xFFFF00']
+
+var hairColors = ['0x090806', '0x2C222B', '0x71635A', '0xB7A69E', '0xD6C4C2',
+                  '0xCABFB1', '0xDCD0BA', '0x6A4E42', '0xE6CEA8', '0xE5C8A8',
+                  '0xDEBC99', '0xB89778', '0xA56B46', '0xB55239', '0x8D4A43',
+                  '0x91553D', '0xA7856A', '0x3B3024', '0x554838', '0x4E433F']
+
+var faceColors = ['0x8d5524', '0xc68642', '0xe0ac69', '0xf1c27d', '0xffdbac']
 
 var walkSpeed = 1;
 var runSpeed = 1;
@@ -127,7 +132,7 @@ Splab.MainGame.prototype = {
 
         this.world.setBounds(0, 0, 2048, 512);
 
-        this.stage.backgroundColor = '#ffffff';
+        this.stage.backgroundColor = '0xffffff';
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -244,6 +249,10 @@ Splab.MainGame.prototype = {
 		isChicken = false;
     },
 	update: function() {
+	    if (currentUpdate++ === 5) {
+	        currentUpdate = 0;
+            currentFrame = (currentFrame + 1) % 8;
+        }
 	    npcs.map(function(n) {n.destroy()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
@@ -275,13 +284,14 @@ Splab.MainGame.prototype = {
                     npc.scale.x = -4;
                 }
 
+                npc.frame = currentFrame;
+
                 var face = this.make.sprite(0, 0, 'sciface');
                 face.anchor.set(0.5, 0.5);
                 face.smoothed = false;
-                face.tint = Math.random() * 0xffffff;
+                face.tint = faceColors[npcProperties[i].appearance.skin_color];
+                face.frame = currentFrame;
                 npc.addChild(face);
-
-		        shirtBounce = shirt.animations.add('bounce');
 
 
                 if (npcProperties[i].appearance.hair == 0) {
@@ -290,17 +300,16 @@ Splab.MainGame.prototype = {
                     guyhair.smoothed = false;
                     guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
                     npc.addChild(guyhair);
-					guyhair.animations.add('bounce');
-                    guyhair.animations.play('bounce', sciFPS, true);
+                    guyhair.frame = currentFrame;
                 }
                 else {
                     var girlhair = this.make.sprite(0, 0, 'girlhair');
                     girlhair.anchor.set(0.5, 0.5);
                     girlhair.smoothed = false;
+                    //console.log(npcProperties[i].appearance.hair_color);
                     girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-					girlhair.animations.add('bounce');
-                    girlhair.animations.play('bounce', sciFPS, true);
                     npc.addChild(girlhair);
+                    girlhair.frame = currentFrame;
                 }
 
                 var shirt = this.make.sprite(0, 0, 'scishirt');
@@ -308,14 +317,15 @@ Splab.MainGame.prototype = {
                 shirt.smoothed = false;
                 shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
                 npc.addChild(shirt);
+                shirt.frame = currentFrame;
 
                 this.game.physics.arcade.enable(npc);
-		        face.animations.add('bounce');
-				shirt.animations.add('bounce');
-				npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
-                face.animations.play('bounce', sciFPS, true);
-                shirt.animations.play('bounce', sciFPS, true);
-                npc.animations.play('sciwalk', sciFPS, true);
+		        //face.animations.add('bounce');
+				//shirt.animations.add('bounce');
+				//npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
+                //face.animations.play('bounce', sciFPS, true);
+                //shirt.animations.play('bounce', sciFPS, true);
+                //npc.animations.play('sciwalk', sciFPS, true);
 
                 //npc.body.gravity.y = 2000;
                 npcs.push(npc);

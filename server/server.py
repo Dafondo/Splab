@@ -19,11 +19,13 @@ large_npc_count = 20
 shirt_types = 9
 hair_types = 1
 hair_colors = 19
+skin_colors = 4
 
 def gen_random_appearance():
     return {'shirt': r.randint(0, shirt_types),
             'hair': r.randint(0, hair_types),
-            'hair_color': r.randint(0, hair_types)}
+            'hair_color': r.randint(0, hair_colors),
+            'skin_color': r.randint(0, skin_colors)}
 
 def gen_npc():
     return {'alive': True,
