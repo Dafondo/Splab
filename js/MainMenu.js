@@ -2,16 +2,16 @@ var Splab = Splab || {};
 
 Splab.MainMenu = function(){};
 
-// Input fields
 var username;
 var capacity;
+var size;
 
-var button
+var enter;
+var button;
+
+var focus = 0;
 
 Splab.MainMenu.prototype = {
-	startGame: function() {
-		this.state.start('MainGame');
-	},
     sendInfo: function() {
         if (Splab.game.global.roomState == "empty") {
             Splab.game.global.socket.emit('create', {'uname': username.value,
@@ -50,6 +50,9 @@ Splab.MainMenu.prototype = {
 
 	},
 	create: function() {
+		enter = this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
+		enter.onDown.add(this.sendInfo, this);
+
 		username = game.add.inputField(10, 90, {
 			font: '18px Arial',
 		    fill: '#212121',

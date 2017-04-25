@@ -35,9 +35,12 @@ var starSpeed = -10;
 var bgSpeed = -20;
 
 // Timers
-var transformTime = 3;
+var transformTime = 5;
 var lastTransform = 0;
-var cooldown = 3000;
+var cooldown = 2000;
+var chickenBar;
+var chickenBarIndex;
+var chickenTimerLoop;
 
 var viewWindowSize = 512;
 var myPos;
@@ -139,7 +142,7 @@ Splab.MainGame.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
 		// Create player body
-		player = this.game.add.sprite(game.world.centerX, this.game.world.height - 100, 'allwalk');
+		player = this.game.add.sprite(game.world.centerX, this.game.world.height - 74, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
@@ -200,12 +203,12 @@ Splab.MainGame.prototype = {
 		ground.forEach((tile) => tile.scale.setTo(4));
 		ground.forEach((tile) => tile.body.immovable = true);
 
-		// Create ground and platforms
-		/*var ground = platforms.create(0, this.game.world.height - 64, 'platform');
-		ground.scale.setTo(2, 2); // scale to width of the game
-		ground.body.immovable = true;
-		var ledges = [ platforms.create(400, 400, 'platform'), platforms.create(-150, 250, 'platform') ];
-		ledges.forEach((ledge) => ledge.body.immovable = true);*/
+        chickenBar = this.add.group();
+        for (var i = 0; i < transformTime; i++) {
+            chickenBar.create(this.world.centerX - 256 + i*32, 0, 'c');
+        };
+
+        chickenBar.alpha = 0;
 
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
@@ -222,9 +225,13 @@ Splab.MainGame.prototype = {
 		Splab.game.global.music.loop = true;
 		Splab.game.global.music.play();
 
+        this.world.bringToTop(chickenBar);
+
         this.camera.follow(player);
 	},
     transformBack: function() {
+        chickenBar.alpha = 0;
+        for(var i = 0; i < chickenBar.children.length; i++) chickenBar.children[i].alpha = 1;
         playerface.tint = Math.random() * 0xffffff;
         playerguyhair.tint = Math.random() * 0xffffff;
         playergirlhair.tint = Math.random() * 0xffffff;
@@ -248,6 +255,10 @@ Splab.MainGame.prototype = {
 		background.autoScroll(bgSpeed, 0);
 
 		isChicken = false;
+    },
+    decreaseChickenBar() {
+        chickenBar.children[chickenBarIndex].alpha = 0;
+        if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
 	update: function() {
 		// Animation frame for players
@@ -275,7 +286,7 @@ Splab.MainGame.prototype = {
                     adjustedLoc = -1 * (512 - adjustedLoc);
                 }
                 //console.log(adjustedLoc);
-                var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height-64, 'allwalk');
+                var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
                 npc.anchor.set(0.5, 0.5);
                 npc.smoothed = false;
                 if (npcProperties[i].facing) {
@@ -387,6 +398,7 @@ Splab.MainGame.prototype = {
             playerguyhair.alpha = 0;
             playergirlhair.alpha = 0;
             playershirt.alpha = 0;
+            chickenBar.alpha = 1;
 
             player.animations.play('cwalk', cFPS, true);
             playerface.animations.stop();
@@ -400,6 +412,8 @@ Splab.MainGame.prototype = {
 			background.autoScroll(bgSpeed, 0);
 
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
+            chickenBarIndex = transformTime - 1;
+            chickenTimerLoop = this.time.events.loop(Phaser.Timer.SECOND, this.decreaseChickenBar, this);
 			lastTransform = this.time.now + transformTime * 1000;
 
 			bawk.play();
