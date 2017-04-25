@@ -177,6 +177,10 @@ Splab.MainGame.prototype = {
 		bawk = this.add.audio('bawk');
 		bawk.loop = true;
 
+		Splab.game.global.music = this.add.audio('music');
+		Splab.game.global.music.loop = true;
+		Splab.game.global.music.play();
+
         this.camera.follow(player);
 	},
     transformBack: function() {

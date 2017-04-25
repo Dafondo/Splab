@@ -20,6 +20,8 @@ Splab.Preload.prototype = {
         this.game.load.spritesheet('allwalk', 'assets/sprites/allwalk.png', 32, 32, 16)
 		this.game.load.image('splab1', 'assets/sprites/splab1a.png?v=1');
 		this.game.load.image('splabfloor', 'assets/sprites/splabfloor.png');
+		this.game.load.audio('bawk', 'assets/audio/chicken.wav');
+		this.game.load.audio('music', 'assets/audio/DigitalLemonade.mp3')
         this.load.image('background','assets/sprites/starry.png');
 
 	},
@@ -36,7 +38,7 @@ Splab.Preload.prototype = {
             console.log(data);
             Splab.game.state.start('MainGame');
         });
- 
+
     },
     loadStart: function() {
         text.setText("Loading ...");
@@ -72,6 +74,6 @@ Splab.Preload.prototype = {
 		this.register();
 	},
 	create: function() {
-		// this.state.start('WaitScreen');
+		// this.state.start('MainGame');
 	}
 };

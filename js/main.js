@@ -5,7 +5,7 @@ var game = Splab.game = new Phaser.Game(512, 512, Phaser.CANVAS);
 Phaser.Canvas.setSmoothingEnabled(this, false);
 
 Splab.game.global = {
-    menuMusic: null,
+    music: null,
     socket: null,
     roomState: null,
     myID: -1,
