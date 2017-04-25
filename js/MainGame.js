@@ -19,6 +19,8 @@ var face;
 var guyhair;
 var girlhair;
 
+var bawk;
+
 // Animations
 var cloudEmitter;
 var sciwalk;
@@ -172,6 +174,9 @@ Splab.MainGame.prototype = {
 		key_run.onDown.add(this.startRun, this);
 		key_run.onUp.add(this.endRun, this);
 
+		bawk = this.add.audio('bawk');
+		bawk.loop = true;
+
         this.camera.follow(player);
 	},
     transformBack: function() {
@@ -229,6 +234,10 @@ Splab.MainGame.prototype = {
 		// Gravity
 		player.body.gravity.y = isChicken ? 200 : 2000;
 
+		if(!isChicken) {
+			bawk.stop();
+		}
+
         // Transform
         if(transform.isDown && lastTransform + cooldown < this.time.now) {
             face.alpha = 0;
@@ -249,6 +258,8 @@ Splab.MainGame.prototype = {
 
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
 			lastTransform = this.time.now + transformTime * 1000;
+
+			bawk.play();
 
 			isChicken = true;
         }
