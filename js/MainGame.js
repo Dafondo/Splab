@@ -359,14 +359,23 @@ Splab.MainGame.prototype = {
                 speed = -1 * speed;
             }
 
-            npcLocs[i] = (npcLocs[i] + speed) % worldSize;
+            npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
         }
+
+        var mySpeed = walkSpeed;
+        if (!myInfo.facing) {
+            mySpeed = -1 * mySpeed;
+        }
+
+        myPos = ((myPos + speed) % worldSize + worldSize) % worldSize;
+
 
         // Check collisions
         var hitPlatform = game.physics.arcade.collide(player, platforms);
 
 		// Move with arrow keys
 		if (cursors.left.isDown) {
+		    myInfo.facing = false;
 			if(starSpeed < 0) starSpeed *= -1;
 			if(bgSpeed < 0)	bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
@@ -375,6 +384,7 @@ Splab.MainGame.prototype = {
             player.scale.x = -4;
 		}
 		else if (cursors.right.isDown) {
+		    myInfo.facing = true;
 			if(starSpeed > 0) starSpeed *= -1;
 			if(bgSpeed > 0) bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
