@@ -16,10 +16,11 @@ var mapNumTiles = 4;
 var mapLength = 2048;
 var visibleMap;
 
-// Sprites
+// BG sprites
 var stars;
 var background;
 
+// Player sprites
 var playerGroup;
 var player;
 var platforms;
@@ -41,7 +42,7 @@ var shirtBounce;
 var sciFPS = 12;
 var cFPS = 24;
 var starSpeed = -10;
-var bgSpeed = -20;
+var bgSpeed = -80;
 
 // Timers
 var transformTime = 5;
@@ -51,6 +52,7 @@ var chickenBar;
 var chickenBarIndex;
 var chickenTimerLoop;
 
+// NPC vars
 var viewWindowSize = 512;
 var myPos;
 var worldSize;
@@ -61,6 +63,7 @@ var playerInfo = []
 var myInfo;
 var npcs = []
 
+// NPC anim vars
 var currentFrame = 0;
 var nextFrameTime = 0;
 var msPF = 1000/12;
@@ -115,7 +118,6 @@ Splab.MainGame.prototype = {
 		starSpeed *= 1.5;
 		bgSpeed *= 2;
 		stars.autoScroll(starSpeed, 0);
-		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed *= 2;
 		cwalk.speed *= 2;
 		faceBounce.speed *= 2;
@@ -129,7 +131,6 @@ Splab.MainGame.prototype = {
 		starSpeed /= 1.5;
 		bgSpeed /= 2;
 		stars.autoScroll(starSpeed, 0);
-		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed /= 2;
 		cwalk.speed /= 2;
 		faceBounce.speed /= 2;
@@ -138,9 +139,12 @@ Splab.MainGame.prototype = {
 		shirtBounce.speed /= 2;
 	},
 	create: function() {
+        this.stage.backgroundColor = '0xffffff';
+        // Star backdrop
 		stars = this.add.tileSprite(0, 0, mapLength, this.game.height, 'background');
 		stars.autoScroll(starSpeed, 0);
 
+        // Initialize lab background tiles
         for(var i = 0; i < mapNumTiles; i++) {
             if(i%2==0) b = this.add.sprite(0, this.game.world.centerY, 'splab1');
             else {
@@ -155,20 +159,8 @@ Splab.MainGame.prototype = {
             this.physics.enable(b);
             map.push(b);
         }
-        // background = this.add.tileSprite(0, 0, mapLength, 128, 'splab1');
-		// background.scale.setTo(4);
-		// background.smoothed = false;
-		// background.autoScroll(bgSpeed, 0);
-
-		// Don't know why, but don't remove this
-		floor = this.make.sprite(0, 0, 'splabfloor');
-		floor.alpha = 0;
-		floor.smoothed = false;
-		// background.addChild(floor);
 
         this.world.setBounds(0, 0, 2048, 512);
-
-        this.stage.backgroundColor = '0xffffff';
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -207,6 +199,7 @@ Splab.MainGame.prototype = {
         playershirt.tint = Math.random() * 0xffffff;
         player.addChild(playershirt);
 
+        // Choose guy or girl
         if(Math.floor(Math.random() * 2) == 0) playergirlhair.alpha = 0;
         else playerguyhair.alpha = 0;
 
@@ -216,9 +209,9 @@ Splab.MainGame.prototype = {
         var xLoc = player.x + modLoc;
 
         var leftIndex = (((index - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
-        var LLIndex = (((leftIndex - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
+        // var LLIndex = (((leftIndex - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
         var rightIndex = (index + 1) % mapNumTiles;
-        var RRIndex = (rightIndex + 1) % mapNumTiles;
+        // var RRIndex = (rightIndex + 1) % mapNumTiles;
 
         map[index].x = xLoc;
         map[leftIndex].x = xLoc - 512;
@@ -269,11 +262,11 @@ Splab.MainGame.prototype = {
 		ground.forEach((tile) => tile.scale.setTo(4));
 		ground.forEach((tile) => tile.body.immovable = true);
 
+        // Chicken mode duration bar
         chickenBar = this.add.group();
         for (var i = 0; i < transformTime; i++) {
             chickenBar.create(i*24 - player.width/2, player.height/2 * -1, 'c');
         };
-
         chickenBar.alpha = 0;
         chickenBar.scale.set(0.25);
 
@@ -287,49 +280,52 @@ Splab.MainGame.prototype = {
 		key_run.onDown.add(this.startRun, this);
 		key_run.onUp.add(this.endRun, this);
 
+        // Bawk sound
 		bawk = this.add.audio('bawk');
 		bawk.loop = true;
 
+        // Background music
 		Splab.game.global.music = this.add.audio('music');
 		Splab.game.global.music.loop = true;
 		Splab.game.global.music.play();
 
+        // Render player above backgroud
         this.world.bringToTop(chickenBar);
         this.world.bringToTop(playerGroup);
-
-        this.camera.follow(player);
 	},
-    scrollBG: function(s) {
-
-    },
     transformBack: function() {
+        // Disappear chicken bar and refill it
         chickenBar.alpha = 0;
         for(var i = 0; i < chickenBar.children.length; i++) chickenBar.children[i].alpha = 1;
+
+        // Change sprite colors
         playerface.tint = Math.random() * 0xffffff;
         playerguyhair.tint = Math.random() * 0xffffff;
         playergirlhair.tint = Math.random() * 0xffffff;
         playershirt.tint = Math.random() * 0xffffff;
 
+        // Make scientist sprite visible
         playerface.alpha = 1;
         if(Math.floor(Math.random() * 2) == 0) playerguyhair.alpha = 1;
         else playergirlhair.alpha = 1;
         playershirt.alpha = 1;
 
+        // Play scientist animations
         playerface.animations.play('bounce', sciFPS, true);
         playerguyhair.animations.play('bounce', sciFPS, true);
         playergirlhair.animations.play('bounce', sciFPS, true);
         playershirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
+        // Slow down bg scrolling speed
         starSpeed /= 1.5;
 		bgSpeed /= 2;
-
 		stars.autoScroll(starSpeed, 0);
-		this.scrollBG(bgSpeed);
 
 		isChicken = false;
     },
     decreaseChickenBar() {
+        // Makes last visible chicken in chicken bar invis
         chickenBar.children[chickenBarIndex].alpha = 0;
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
@@ -340,10 +336,11 @@ Splab.MainGame.prototype = {
 			nextFrameTime = this.time.now + msPF;
 		}
 
-        visibleMap.body.velocity.x = bgSpeed * 4;
+        // Move lab bg tiles
+        visibleMap.body.velocity.x = bgSpeed;
+
+        // Moves and create new bg tiles when needed
         var midIndex = Math.floor(visibleMap.children.length / 2);
-        //
-        // console.log(visibleMap.children[midIndex].world.x - player.x);
         if(bgSpeed < 0 && visibleMap.children[midIndex].world.x - player.x <= -256) {
             var mapIndex = map.indexOf(visibleMap.children[midIndex]);
             var pos = visibleMap.children[midIndex].x;
@@ -354,7 +351,6 @@ Splab.MainGame.prototype = {
             visibleMap.children[2].alpha = 1;
         }
         else if (bgSpeed > 0 && visibleMap.children[midIndex].world.x - player.x >= -256) {
-            // console.log(map[0].world.x + ", " + map[1].world.x + ", " + map[2].world.x);
             var mapIndex = map.indexOf(visibleMap.children[midIndex]);
             var pos = visibleMap.children[midIndex].x;
             var insertIndex = (((mapIndex - 2) % mapNumTiles) + mapNumTiles) % mapNumTiles;
@@ -363,6 +359,7 @@ Splab.MainGame.prototype = {
             visibleMap.children[0].x = pos - 1024;
             visibleMap.children[0].alpha = 1;
         }
+        // Moves bg tile parent sprite back to 0 if it moves to far away
         if(visibleMap.world.x < -2048) {
             x1 = visibleMap.children[0].x;
             x2 = visibleMap.children[1].x;
@@ -524,7 +521,6 @@ Splab.MainGame.prototype = {
 			if(starSpeed < 0) starSpeed *= -1;
 			if(bgSpeed < 0)	bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
             player.scale.x = -4;
 		}
@@ -533,7 +529,6 @@ Splab.MainGame.prototype = {
 			if(starSpeed > 0) starSpeed *= -1;
 			if(bgSpeed > 0) bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
             player.scale.x = 4;
 		}
@@ -552,28 +547,32 @@ Splab.MainGame.prototype = {
 
         // Transform
         if(transform.isDown && lastTransform + cooldown < this.time.now) {
+            // Disappears scientists sprites and reveals chickenbar
             playerface.alpha = 0;
             playerguyhair.alpha = 0;
             playergirlhair.alpha = 0;
             playershirt.alpha = 0;
             chickenBar.alpha = 1;
 
+            // Play chicken animation, stops others
             player.animations.play('cwalk', cFPS, true);
             playerface.animations.stop();
             playerguyhair.animations.stop();
             playergirlhair.animations.stop();
             playershirt.animations.stop();
 
+            // Increases bg scrolling speed
 			starSpeed *= 1.5;
 			bgSpeed *= 2;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
+            // Starts timers on transform time and bar decrement
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
             chickenBarIndex = transformTime - 1;
             chickenTimerLoop = this.time.events.loop(Phaser.Timer.SECOND, this.decreaseChickenBar, this);
 			lastTransform = this.time.now + transformTime * 1000;
 
+            // Play bawks
 			bawk.play();
 
 			isChicken = true;
