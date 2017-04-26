@@ -361,6 +361,26 @@ Splab.MainGame.prototype = {
             visibleMap.children[0].x = pos - 1024;
             visibleMap.children[0].alpha = 1;
         }
+        if(visibleMap.world.x < -2048) {
+            x1 = visibleMap.children[0].x;
+            x2 = visibleMap.children[1].x;
+            x3 = visibleMap.children[2].x;
+            visibleMap.world.x = 0;
+            visibleMap.x = 0;
+            visibleMap.children[0].x = x1 - 2048;
+            visibleMap.children[1].x = x2 - 2048;
+            visibleMap.children[2].x = x3 - 2048;
+        }
+        else if(visibleMap.world.x > 2048) {
+            x1 = visibleMap.children[0].x;
+            x2 = visibleMap.children[1].x;
+            x3 = visibleMap.children[2].x;
+            visibleMap.world.x = 0;
+            visibleMap.x = 0;
+            visibleMap.children[0].x = x1 + 2048;
+            visibleMap.children[1].x = x2 + 2048;
+            visibleMap.children[2].x = x3 + 2048;
+        }
 
 	    npcs.map(function(n) {n.destroy()});
 	    // draw all npcs / other players
