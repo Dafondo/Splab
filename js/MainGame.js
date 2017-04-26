@@ -78,6 +78,8 @@ var faceColors = ['0x8d5524', '0xc68642', '0xe0ac69', '0xf1c27d', '0xffdbac']
 var walkSpeed = 1;
 var runSpeed = 1;
 
+var MAX_INT_UND = 1000000009
+
 Splab.MainGame = function(){};
 
 Splab.MainGame.prototype = {
@@ -385,17 +387,42 @@ Splab.MainGame.prototype = {
 	    npcs.map(function(n) {n.destroy()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
-            if (l - myPos < 0) {
-                return ((l - myPos) % worldSize + worldSize) % worldSize;
+	        if (myPos >= 256 && myPos <= worldSize - 256) { // normal case
+	            if (Math.abs(l - myPos) <= 256) {
+	                return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
             }
-            else {
-                return l - myPos;
+            else if (myPos < 256) {
+                if (l >= worldSize - (256 - myPos)) {
+                    // guaranteed to be in frame
+                    return -1 * (myPos + worldSize - l);
+                }
+                else if (Math.abs(l - myPos) <= 256) {
+                    return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
             }
+            else if (myPos > worldSize - 256) {
+                if (l <= 256 - (worldSize - myPos)) {
+                    return l + worldSize - myPos;
+                }
+                else if (Math.abs(l - myPos) <= 256) {
+                    return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
+            }
+            // should be exhaustive
         });
 
         for (var i = 0 ; i < npcLocs.length ; i++) {
-            if ((relativeNPCLocs[i] >= 0 && relativeNPCLocs[i] <= 256) ||
-                (relativeNPCLocs[i] >= 256 && relativeNPCLocs[i] <= 512)) {
+            if (relativeNPCLocs[i] != MAX_INT_UND) {
                 // we render this npc
                 var adjustedLoc = relativeNPCLocs[i];
                 if (adjustedLoc >= 256) {
@@ -472,13 +499,18 @@ Splab.MainGame.prototype = {
                 speed = -1 * speed;
             }
 
+            console.log(speed);
+
             npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
         }
+        console.log("===");
 
         var mySpeed = walkSpeed;
         if (!myInfo.facing) {
             mySpeed = -1 * mySpeed;
         }
+
+        console.log(mySpeed);
 
         myPos = ((myPos + speed) % worldSize + worldSize) % worldSize;
 
