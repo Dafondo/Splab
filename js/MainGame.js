@@ -10,15 +10,24 @@ var speed = 1;
 
 var isChicken = false;
 
+// This MFing map
+var map = [];
+var mapNumTiles = 4;
+var mapLength = 2048;
+var visibleMap;
+
 // Sprites
 var stars;
 var background;
+
+var playerGroup;
 var player;
 var platforms;
 var face;
 var guyhair;
 var girlhair;
 
+// Sounds
 var bawk;
 
 // Animations
@@ -88,6 +97,12 @@ Splab.MainGame.prototype = {
         }
 
         worldSize = Splab.game.global.state.world_size;
+
+        if(Splab.game.global.size === 'small') mapLength = 2048;
+        else if(Splab.game.global.size === 'medium') mapLength = 3072;
+        else if(Splab.game.global.size === 'large') mapLength = 4096;
+        mapNumTiles = mapLength / 512;
+
 	},
 
 	preload: function() {
@@ -98,7 +113,7 @@ Splab.MainGame.prototype = {
 		starSpeed *= 1.5;
 		bgSpeed *= 2;
 		stars.autoScroll(starSpeed, 0);
-		background.autoScroll(bgSpeed, 0);
+		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed *= 2;
 		cwalk.speed *= 2;
 		faceBounce.speed *= 2;
@@ -112,7 +127,7 @@ Splab.MainGame.prototype = {
 		starSpeed /= 1.5;
 		bgSpeed /= 2;
 		stars.autoScroll(starSpeed, 0);
-		background.autoScroll(bgSpeed, 0);
+		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed /= 2;
 		cwalk.speed /= 2;
 		faceBounce.speed /= 2;
@@ -121,18 +136,33 @@ Splab.MainGame.prototype = {
 		shirtBounce.speed /= 2;
 	},
 	create: function() {
-		stars = this.add.tileSprite(0, 0, 2048, this.game.height, 'background');
+		stars = this.add.tileSprite(0, 0, mapLength, this.game.height, 'background');
 		stars.autoScroll(starSpeed, 0);
-        background = this.add.tileSprite(0, 0, 2048, 128, 'splab1');
-		background.scale.setTo(4);
-		background.smoothed = false;
-		background.autoScroll(bgSpeed, 0);
+
+        for(var i = 0; i < mapNumTiles; i++) {
+            if(i%2==0) b = this.add.sprite(0, this.game.world.centerY, 'splab1');
+            else {
+                b = this.add.sprite(0, this.game.world.centerY, 'splab2ss');
+                b.animations.add('splab2anim');
+                b.animations.play('splab2anim', sciFPS, true);
+            }
+            b.smoothed = false;
+            b.scale.setTo(4);
+            b.anchor.set(0, 0.5);
+            b.alpha = 0;
+            this.physics.enable(b);
+            map.push(b);
+        }
+        // background = this.add.tileSprite(0, 0, mapLength, 128, 'splab1');
+		// background.scale.setTo(4);
+		// background.smoothed = false;
+		// background.autoScroll(bgSpeed, 0);
 
 		// Don't know why, but don't remove this
 		floor = this.make.sprite(0, 0, 'splabfloor');
 		floor.alpha = 0;
 		floor.smoothed = false;
-		background.addChild(floor);
+		// background.addChild(floor);
 
         this.world.setBounds(0, 0, 2048, 512);
 
@@ -141,12 +171,14 @@ Splab.MainGame.prototype = {
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
+        playerGroup = this.add.group();
 		// Create player body
-		player = this.game.add.sprite(game.world.centerX, this.game.world.height - 74, 'allwalk');
+		player = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 74, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
 		this.game.physics.arcade.enable(player);
+        playerGroup.add(player);
 
 		// Create player components
         playerface = this.make.sprite(0, 0, 'sciface');
@@ -175,6 +207,38 @@ Splab.MainGame.prototype = {
 
         if(Math.floor(Math.random() * 2) == 0) playergirlhair.alpha = 0;
         else playerguyhair.alpha = 0;
+
+        // Place correct map tiles
+        var index = player.x / 512;
+        var modLoc = player.x % 512;
+        var xLoc = player.x + modLoc;
+
+        var leftIndex = (((index - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
+        var LLIndex = (((leftIndex - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
+        var rightIndex = (index + 1) % mapNumTiles;
+        var RRIndex = (rightIndex + 1) % mapNumTiles;
+
+        map[index].x = xLoc;
+        map[leftIndex].x = xLoc - 512;
+        // map[LLIndex].x = xLoc - 1024;
+        map[rightIndex].x = xLoc + 512;
+        // map[RRIndex].x = xLoc + 1024;
+
+        map[index].alpha = 1;
+        map[leftIndex].alpha = 1;
+        // map[LLIndex].alpha = 1;
+        map[rightIndex].alpha = 1;
+        // map[RRIndex].alpha = 1;
+
+        visibleMap = this.add.sprite(0, 0, 'c');
+        visibleMap.alpha = 1;
+        this.physics.enable(visibleMap);
+        visibleMap.addChild(map[leftIndex]);
+        visibleMap.addChild(map[index]);
+        visibleMap.addChild(map[rightIndex]);
+        visibleMap.children[0].world.x = xLoc - 512;
+        visibleMap.children[1].world.x = xLoc;
+        visibleMap.children[2].world.x = xLoc + 512;
 
 		// Create animations
         sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
@@ -229,9 +293,13 @@ Splab.MainGame.prototype = {
 		Splab.game.global.music.play();
 
         this.world.bringToTop(chickenBar);
+        this.world.bringToTop(playerGroup);
 
         this.camera.follow(player);
 	},
+    scrollBG: function(s) {
+
+    },
     transformBack: function() {
         chickenBar.alpha = 0;
         for(var i = 0; i < chickenBar.children.length; i++) chickenBar.children[i].alpha = 1;
@@ -255,7 +323,7 @@ Splab.MainGame.prototype = {
 		bgSpeed /= 2;
 
 		stars.autoScroll(starSpeed, 0);
-		background.autoScroll(bgSpeed, 0);
+		this.scrollBG(bgSpeed);
 
 		isChicken = false;
     },
@@ -264,11 +332,36 @@ Splab.MainGame.prototype = {
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
 	update: function() {
-		// Animation frame for players
+		// Animation frame for npcs
 		if(this.time.now > nextFrameTime) {
 			currentFrame = (currentFrame + 1) % 8;
 			nextFrameTime = this.time.now + msPF;
 		}
+
+        visibleMap.body.velocity.x = bgSpeed * 4;
+        var midIndex = Math.floor(visibleMap.children.length / 2);
+        //
+        // console.log(visibleMap.children[midIndex].world.x - player.x);
+        if(bgSpeed < 0 && visibleMap.children[midIndex].world.x - player.x <= -256) {
+            var mapIndex = map.indexOf(visibleMap.children[midIndex]);
+            var pos = visibleMap.children[midIndex].x;
+            var insertIndex = (mapIndex + 2) % mapNumTiles;
+            visibleMap.children.shift().alpha = 0;
+            visibleMap.addChild(map[insertIndex]);
+            visibleMap.children[2].x = pos + 1024;
+            visibleMap.children[2].alpha = 1;
+        }
+        else if (bgSpeed > 0 && visibleMap.children[midIndex].world.x - player.x >= -256) {
+            // console.log(map[0].world.x + ", " + map[1].world.x + ", " + map[2].world.x);
+            var mapIndex = map.indexOf(visibleMap.children[midIndex]);
+            var pos = visibleMap.children[midIndex].x;
+            var insertIndex = (((mapIndex - 2) % mapNumTiles) + mapNumTiles) % mapNumTiles;
+            visibleMap.children.pop().alpha = 0;
+            visibleMap.addChildAt(map[insertIndex], 0);
+            visibleMap.children[0].x = pos - 1024;
+            visibleMap.children[0].alpha = 1;
+        }
+
 	    npcs.map(function(n) {n.destroy()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
@@ -370,7 +463,7 @@ Splab.MainGame.prototype = {
 			if(starSpeed < 0) starSpeed *= -1;
 			if(bgSpeed < 0)	bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			background.autoScroll(bgSpeed, 0);
+			this.scrollBG(bgSpeed);
 
             player.scale.x = -4;
 		}
@@ -378,7 +471,7 @@ Splab.MainGame.prototype = {
 			if(starSpeed > 0) starSpeed *= -1;
 			if(bgSpeed > 0) bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			background.autoScroll(bgSpeed, 0);
+			this.scrollBG(bgSpeed);
 
             player.scale.x = 4;
 		}
@@ -412,7 +505,7 @@ Splab.MainGame.prototype = {
 			starSpeed *= 1.5;
 			bgSpeed *= 2;
 			stars.autoScroll(starSpeed, 0);
-			background.autoScroll(bgSpeed, 0);
+			this.scrollBG(bgSpeed);
 
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
             chickenBarIndex = transformTime - 1;

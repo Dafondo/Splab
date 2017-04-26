@@ -19,7 +19,9 @@ Splab.Preload.prototype = {
         this.game.load.spritesheet('sciface', 'assets/sprites/sciface.png', 32, 32, 8);
         this.game.load.spritesheet('scishirt', 'assets/sprites/scishirt.png', 32, 32, 8);
         this.game.load.spritesheet('allwalk', 'assets/sprites/allwalk.png', 32, 32, 16)
+		this.game.load.spritesheet('splab2ss', 'assets/sprites/splab2ss.png', 128, 128, 8);
 		this.game.load.image('splab1', 'assets/sprites/splab1a.png?v=1');
+		this.game.load.image('splab2', 'assets/sprites/splab2.png?v=2');
 		this.game.load.image('splabfloor', 'assets/sprites/splabfloor.png');
 		this.game.load.audio('bawk', 'assets/audio/chicken.wav');
 		this.game.load.audio('music', 'assets/audio/DigitalLemonade.mp3')
@@ -63,6 +65,7 @@ Splab.Preload.prototype = {
     },
 	startMainMenu: function() {
 		if(Splab.game.global.roomState != null) {
+			console.log("stuff");
 			this.time.events.remove(waitLoop);
 			this.state.start('MainMenu');
 		}
@@ -71,6 +74,7 @@ Splab.Preload.prototype = {
         text.setText("Load Complete");
         console.log("chicken chicken");
         if(Splab.game.global.roomState == null) waitLoop = this.time.events.loop(100, this.startMainMenu, this);
+		else this.state.start('MainMenu');
     },
 	init: function() {
         this.load.onLoadStart.add(this.loadStart, this);
