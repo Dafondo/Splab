@@ -53,6 +53,7 @@ var chickenBarIndex;
 var chickenTimerLoop;
 
 // NPC vars
+var npcGroup;
 var viewWindowSize = 512;
 var myPos;
 var worldSize;
@@ -166,6 +167,7 @@ Splab.MainGame.prototype = {
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         playerGroup = this.add.group();
+        npcGroup = this.add.group();
 		// Create player body
 		player = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 74, 'allwalk');
         player.anchor.set(0.5, 0.5);
@@ -292,6 +294,8 @@ Splab.MainGame.prototype = {
         // Render player above backgroud
         this.world.bringToTop(chickenBar);
         this.world.bringToTop(playerGroup);
+
+        this.camera.follow(player);
 	},
     transformBack: function() {
         // Disappear chicken bar and refill it
@@ -381,7 +385,7 @@ Splab.MainGame.prototype = {
             visibleMap.children[2].x = x3 + 2048;
         }
 
-	    npcs.map(function(n) {n.destroy()});
+	    npcs.map(function(n) {n.kill()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
 	        if (myPos >= 256 && myPos <= worldSize - 256) { // normal case
@@ -426,62 +430,70 @@ Splab.MainGame.prototype = {
                     adjustedLoc = -1 * (512 - adjustedLoc);
                 }
                 //console.log(adjustedLoc);
-                var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
-                npc.anchor.set(0.5, 0.5);
-                npc.smoothed = false;
-                if (npcProperties[i].facing) {
-                    npc.scale.setTo(4);
+                var npc = npcGroup.getFirstDead(false, this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk', currentFrame);
+                if(npc != null) {
+                    npc.children[0].tint = faceColors[npcProperties[i].appearance.skin_color];
+                    npc.children[1].tint = faceColors[npcProperties[i].appearance.hair_color];
+                    npc.children[2].tint = faceColors[npcProperties[i].appearance.skin_color];
                 }
                 else {
-                    npc.scale.setTo(4);
-                    npc.scale.x = -4;
+                    var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
+                    npc.anchor.set(0.5, 0.5);
+                    npc.smoothed = false;
+                    if (npcProperties[i].facing) {
+                        npc.scale.setTo(4);
+                    }
+                    else {
+                        npc.scale.setTo(4);
+                        npc.scale.x = -4;
+                    }
+
+                    npc.frame = currentFrame;
+
+                    var face = this.make.sprite(0, 0, 'sciface');
+                    face.anchor.set(0.5, 0.5);
+                    face.smoothed = false;
+                    face.tint = faceColors[npcProperties[i].appearance.skin_color];
+                    face.frame = currentFrame;
+                    npc.addChild(face);
+
+
+                    if (npcProperties[i].appearance.hair == 0) {
+                        var guyhair = this.make.sprite(0, 0, 'guyhair');
+                        guyhair.anchor.set(0.5, 0.5);
+                        guyhair.smoothed = false;
+                        guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                        npc.addChild(guyhair);
+                        guyhair.frame = currentFrame;
+                    }
+                    else {
+                        var girlhair = this.make.sprite(0, 0, 'girlhair');
+                        girlhair.anchor.set(0.5, 0.5);
+                        girlhair.smoothed = false;
+                        //console.log(npcProperties[i].appearance.hair_color);
+                        girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                        npc.addChild(girlhair);
+                        girlhair.frame = currentFrame;
+                    }
+
+                    var shirt = this.make.sprite(0, 0, 'scishirt');
+                    shirt.anchor.set(0.5, 0.5);
+                    shirt.smoothed = false;
+                    shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
+                    npc.addChild(shirt);
+                    shirt.frame = currentFrame;
+
+                    this.game.physics.arcade.enable(npc);
+    		        //face.animations.add('bounce');
+    				//shirt.animations.add('bounce');
+    				//npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
+                    //face.animations.play('bounce', sciFPS, true);
+                    //shirt.animations.play('bounce', sciFPS, true);
+                    //npc.animations.play('sciwalk', sciFPS, true);
+
+                    //npc.body.gravity.y = 2000;
+                    npcs.push(npc);
                 }
-
-                npc.frame = currentFrame;
-
-                var face = this.make.sprite(0, 0, 'sciface');
-                face.anchor.set(0.5, 0.5);
-                face.smoothed = false;
-                face.tint = faceColors[npcProperties[i].appearance.skin_color];
-                face.frame = currentFrame;
-                npc.addChild(face);
-
-
-                if (npcProperties[i].appearance.hair == 0) {
-                    var guyhair = this.make.sprite(0, 0, 'guyhair');
-                    guyhair.anchor.set(0.5, 0.5);
-                    guyhair.smoothed = false;
-                    guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-                    npc.addChild(guyhair);
-                    guyhair.frame = currentFrame;
-                }
-                else {
-                    var girlhair = this.make.sprite(0, 0, 'girlhair');
-                    girlhair.anchor.set(0.5, 0.5);
-                    girlhair.smoothed = false;
-                    //console.log(npcProperties[i].appearance.hair_color);
-                    girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-                    npc.addChild(girlhair);
-                    girlhair.frame = currentFrame;
-                }
-
-                var shirt = this.make.sprite(0, 0, 'scishirt');
-                shirt.anchor.set(0.5, 0.5);
-                shirt.smoothed = false;
-                shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
-                npc.addChild(shirt);
-                shirt.frame = currentFrame;
-
-                this.game.physics.arcade.enable(npc);
-		        //face.animations.add('bounce');
-				//shirt.animations.add('bounce');
-				//npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
-                //face.animations.play('bounce', sciFPS, true);
-                //shirt.animations.play('bounce', sciFPS, true);
-                //npc.animations.play('sciwalk', sciFPS, true);
-
-                //npc.body.gravity.y = 2000;
-                npcs.push(npc);
             }
         }
 
@@ -496,18 +508,18 @@ Splab.MainGame.prototype = {
                 speed = -1 * speed;
             }
 
-            console.log(speed);
+            // console.log(speed);
 
             npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
         }
-        console.log("===");
+        // console.log("===");
 
         var mySpeed = walkSpeed;
         if (!myInfo.facing) {
             mySpeed = -1 * mySpeed;
         }
 
-        console.log(mySpeed);
+        // console.log(mySpeed);
 
         myPos = ((myPos + speed) % worldSize + worldSize) % worldSize;
 
