@@ -334,6 +334,10 @@ Splab.MainGame.prototype = {
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
 	update: function() {
+	    console.log("^^^");
+	    console.log(npcLocs[0]);
+	    console.log(myPos);
+	    console.log("^^^");
 		// Animation frame for npcs
 		if(this.time.now > nextFrameTime) {
 			currentFrame = (currentFrame + 1) % 8;
@@ -520,20 +524,18 @@ Splab.MainGame.prototype = {
                 speed = -1 * speed;
             }
 
-            // console.log(speed);
+            npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
+        }
 
             npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
         }
-        // console.log("===");
 
         var mySpeed = walkSpeed;
         if (!myInfo.facing) {
             mySpeed = -1 * mySpeed;
         }
 
-        // console.log(mySpeed);
-
-        myPos = ((myPos + speed) % worldSize + worldSize) % worldSize;
+        myPos = ((myPos + mySpeed) % worldSize + worldSize) % worldSize;
 
 
         // Check collisions
