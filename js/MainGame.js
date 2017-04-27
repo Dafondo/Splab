@@ -433,8 +433,18 @@ Splab.MainGame.prototype = {
                 var npc = npcGroup.getFirstDead(false, this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk', currentFrame);
                 if(npc != null) {
                     npc.children[0].tint = faceColors[npcProperties[i].appearance.skin_color];
-                    npc.children[1].tint = faceColors[npcProperties[i].appearance.hair_color];
-                    npc.children[2].tint = faceColors[npcProperties[i].appearance.skin_color];
+                    npc.children[1].tint = hairColors[npcProperties[i].appearance.hair_color];
+                    npc.children[2].tint = shirtColors[npcProperties[i].appearance.shirt];
+                    if (npcProperties[i].facing) {
+                        npc.scale.setTo(4);
+                    }
+                    else {
+                        npc.scale.setTo(4);
+                        npc.scale.x = -4;
+                    }
+                    npc.children[0].frame = currentFrame;
+                    npc.children[1].frame = currentFrame;
+                    npc.children[2].frame = currentFrame;
                 }
                 else {
                     var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
@@ -492,11 +502,13 @@ Splab.MainGame.prototype = {
                     //npc.animations.play('sciwalk', sciFPS, true);
 
                     //npc.body.gravity.y = 2000;
+                    npcGroup.add(npc);
                     npcs.push(npc);
                 }
             }
         }
 
+        this.world.bringToTop(npcGroup);
 
         // moveeeee!
         for (var i = 0 ; i < npcLocs.length ; i++) {
