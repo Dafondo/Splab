@@ -342,7 +342,6 @@ Splab.MainGame.prototype = {
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
 	update: function() {
-	    console.log(myInfo);
 		// Animation frame for npcs
 		if(this.time.now > nextFrameTime) {
 			currentFrame = (currentFrame + 1) % 8;

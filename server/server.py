@@ -135,6 +135,7 @@ def change_state(data): # we actually just broadcast
 def game_finished():
     global state
     state = None
+    print state
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)
