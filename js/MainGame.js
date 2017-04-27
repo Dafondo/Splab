@@ -16,10 +16,11 @@ var mapNumTiles = 4;
 var mapLength = 2048;
 var visibleMap;
 
-// Sprites
+// BG sprites
 var stars;
 var background;
 
+// Player sprites
 var playerGroup;
 var player;
 var platforms;
@@ -41,7 +42,7 @@ var shirtBounce;
 var sciFPS = 12;
 var cFPS = 24;
 var starSpeed = -10;
-var bgSpeed = -20;
+var bgSpeed = -80;
 
 // Timers
 var transformTime = 5;
@@ -51,6 +52,8 @@ var chickenBar;
 var chickenBarIndex;
 var chickenTimerLoop;
 
+// NPC vars
+var npcGroup;
 var viewWindowSize = 512;
 var myPos;
 var worldSize;
@@ -61,6 +64,7 @@ var playerInfo = []
 var myInfo;
 var npcs = []
 
+// NPC anim vars
 var currentFrame = 0;
 var nextFrameTime = 0;
 var msPF = 1000/12;
@@ -77,6 +81,8 @@ var faceColors = ['0x8d5524', '0xc68642', '0xe0ac69', '0xf1c27d', '0xffdbac']
 
 var walkSpeed = 1;
 var runSpeed = 1;
+
+var MAX_INT_UND = 1000000009
 
 Splab.MainGame = function(){};
 
@@ -103,6 +109,9 @@ Splab.MainGame.prototype = {
         else if(Splab.game.global.size === 'large') mapLength = 4096;
         mapNumTiles = mapLength / 512;
 
+        if (!myInfo.facing) {
+            bgSpeed = -1 * bgSpeed;
+        }
 	},
 
 	preload: function() {
@@ -113,7 +122,6 @@ Splab.MainGame.prototype = {
 		starSpeed *= 1.5;
 		bgSpeed *= 2;
 		stars.autoScroll(starSpeed, 0);
-		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed *= 2;
 		cwalk.speed *= 2;
 		faceBounce.speed *= 2;
@@ -127,7 +135,6 @@ Splab.MainGame.prototype = {
 		starSpeed /= 1.5;
 		bgSpeed /= 2;
 		stars.autoScroll(starSpeed, 0);
-		// background.autoScroll(bgSpeed, 0);
 		sciwalk.speed /= 2;
 		cwalk.speed /= 2;
 		faceBounce.speed /= 2;
@@ -136,9 +143,12 @@ Splab.MainGame.prototype = {
 		shirtBounce.speed /= 2;
 	},
 	create: function() {
+        this.stage.backgroundColor = '0xffffff';
+        // Star backdrop
 		stars = this.add.tileSprite(0, 0, mapLength, this.game.height, 'background');
 		stars.autoScroll(starSpeed, 0);
 
+        // Initialize lab background tiles
         for(var i = 0; i < mapNumTiles; i++) {
             if(i%2==0) b = this.add.sprite(0, this.game.world.centerY, 'splab1');
             else {
@@ -153,30 +163,24 @@ Splab.MainGame.prototype = {
             this.physics.enable(b);
             map.push(b);
         }
-        // background = this.add.tileSprite(0, 0, mapLength, 128, 'splab1');
-		// background.scale.setTo(4);
-		// background.smoothed = false;
-		// background.autoScroll(bgSpeed, 0);
-
-		// Don't know why, but don't remove this
-		floor = this.make.sprite(0, 0, 'splabfloor');
-		floor.alpha = 0;
-		floor.smoothed = false;
-		// background.addChild(floor);
 
         this.world.setBounds(0, 0, 2048, 512);
-
-        this.stage.backgroundColor = '0xffffff';
 
 		// Enable physics
 		this.game.physics.startSystem(Phaser.Physics.ARCADE);
 
         playerGroup = this.add.group();
+        npcGroup = this.add.group();
 		// Create player body
 		player = this.game.add.sprite(this.game.world.centerX, this.game.world.height - 74, 'allwalk');
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
+
+        if (!myInfo.facing) {
+            player.scale.x = -4;
+        }
+
 		this.game.physics.arcade.enable(player);
         playerGroup.add(player);
 
@@ -184,27 +188,28 @@ Splab.MainGame.prototype = {
         playerface = this.make.sprite(0, 0, 'sciface');
         playerface.anchor.set(0.5, 0.5);
         playerface.smoothed = false;
-        playerface.tint = Math.random() * 0xffffff;
+        playerface.tint = choose(faceColors);
         player.addChild(playerface);
 
         playerguyhair = this.make.sprite(0, 0, 'guyhair');
         playerguyhair.anchor.set(0.5, 0.5);
         playerguyhair.smoothed = false;
-        playerguyhair.tint = Math.random() * 0xffffff;
+        playerguyhair.tint = choose(hairColors);
         player.addChild(playerguyhair);
 
         playergirlhair = this.make.sprite(0, 0, 'girlhair');
         playergirlhair.anchor.set(0.5, 0.5);
         playergirlhair.smoothed = false;
-        playergirlhair.tint = Math.random() * 0xffffff;
+        playergirlhair.tint = choose(hairColors);
         player.addChild(playergirlhair);
 
         playershirt = this.make.sprite(0, 0, 'scishirt');
         playershirt.anchor.set(0.5, 0.5);
         playershirt.smoothed = false;
-        playershirt.tint = Math.random() * 0xffffff;
+        playershirt.tint = choose(shirtColors);
         player.addChild(playershirt);
 
+        // Choose guy or girl
         if(Math.floor(Math.random() * 2) == 0) playergirlhair.alpha = 0;
         else playerguyhair.alpha = 0;
 
@@ -214,9 +219,9 @@ Splab.MainGame.prototype = {
         var xLoc = player.x + modLoc;
 
         var leftIndex = (((index - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
-        var LLIndex = (((leftIndex - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
+        // var LLIndex = (((leftIndex - 1) % mapNumTiles) + mapNumTiles) % mapNumTiles;
         var rightIndex = (index + 1) % mapNumTiles;
-        var RRIndex = (rightIndex + 1) % mapNumTiles;
+        // var RRIndex = (rightIndex + 1) % mapNumTiles;
 
         map[index].x = xLoc;
         map[leftIndex].x = xLoc - 512;
@@ -267,11 +272,11 @@ Splab.MainGame.prototype = {
 		ground.forEach((tile) => tile.scale.setTo(4));
 		ground.forEach((tile) => tile.body.immovable = true);
 
+        // Chicken mode duration bar
         chickenBar = this.add.group();
         for (var i = 0; i < transformTime; i++) {
             chickenBar.create(i*24 - player.width/2, player.height/2 * -1, 'c');
         };
-
         chickenBar.alpha = 0;
         chickenBar.scale.set(0.25);
 
@@ -280,54 +285,59 @@ Splab.MainGame.prototype = {
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        transform = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+        transform = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
 		key_run = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 		key_run.onDown.add(this.startRun, this);
 		key_run.onUp.add(this.endRun, this);
 
+        // Bawk sound
 		bawk = this.add.audio('bawk');
 		bawk.loop = true;
 
+        // Background music
 		Splab.game.global.music = this.add.audio('music');
 		Splab.game.global.music.loop = true;
 		Splab.game.global.music.play();
 
+        // Render player above backgroud
         this.world.bringToTop(chickenBar);
         this.world.bringToTop(playerGroup);
 
         this.camera.follow(player);
 	},
-    scrollBG: function(s) {
-
-    },
     transformBack: function() {
+        // Disappear chicken bar and refill it
         chickenBar.alpha = 0;
         for(var i = 0; i < chickenBar.children.length; i++) chickenBar.children[i].alpha = 1;
-        playerface.tint = Math.random() * 0xffffff;
-        playerguyhair.tint = Math.random() * 0xffffff;
-        playergirlhair.tint = Math.random() * 0xffffff;
-        playershirt.tint = Math.random() * 0xffffff;
 
+        // Change sprite colors
+        playerface.tint = choose(faceColors);
+        playerguyhair.tint = choose(hairColors);
+        playergirlhair.tint = choose(hairColors);
+        playershirt.tint = choose(shirtColors);
+
+        // Make scientist sprite visible
         playerface.alpha = 1;
         if(Math.floor(Math.random() * 2) == 0) playerguyhair.alpha = 1;
         else playergirlhair.alpha = 1;
         playershirt.alpha = 1;
 
+        // Play scientist animations
         playerface.animations.play('bounce', sciFPS, true);
         playerguyhair.animations.play('bounce', sciFPS, true);
         playergirlhair.animations.play('bounce', sciFPS, true);
         playershirt.animations.play('bounce', sciFPS, true);
         player.animations.play('sciwalk', sciFPS, true);
 
+        // Slow down bg scrolling speed
         starSpeed /= 1.5;
 		bgSpeed /= 2;
-
 		stars.autoScroll(starSpeed, 0);
-		this.scrollBG(bgSpeed);
 
 		isChicken = false;
     },
     decreaseChickenBar() {
+        // Makes last visible chicken in chicken bar invis
         chickenBar.children[chickenBarIndex].alpha = 0;
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
@@ -338,10 +348,11 @@ Splab.MainGame.prototype = {
 			nextFrameTime = this.time.now + msPF;
 		}
 
-        visibleMap.body.velocity.x = bgSpeed * 4;
+        // Move lab bg tiles
+        visibleMap.body.velocity.x = bgSpeed;
+
+        // Moves and create new bg tiles when needed
         var midIndex = Math.floor(visibleMap.children.length / 2);
-        //
-        // console.log(visibleMap.children[midIndex].world.x - player.x);
         if(bgSpeed < 0 && visibleMap.children[midIndex].world.x - player.x <= -256) {
             var mapIndex = map.indexOf(visibleMap.children[midIndex]);
             var pos = visibleMap.children[midIndex].x;
@@ -352,7 +363,6 @@ Splab.MainGame.prototype = {
             visibleMap.children[2].alpha = 1;
         }
         else if (bgSpeed > 0 && visibleMap.children[midIndex].world.x - player.x >= -256) {
-            // console.log(map[0].world.x + ", " + map[1].world.x + ", " + map[2].world.x);
             var mapIndex = map.indexOf(visibleMap.children[midIndex]);
             var pos = visibleMap.children[midIndex].x;
             var insertIndex = (((mapIndex - 2) % mapNumTiles) + mapNumTiles) % mapNumTiles;
@@ -361,6 +371,7 @@ Splab.MainGame.prototype = {
             visibleMap.children[0].x = pos - 1024;
             visibleMap.children[0].alpha = 1;
         }
+        // Moves bg tile parent sprite back to 0 if it moves to far away
         if(visibleMap.world.x < -2048) {
             x1 = visibleMap.children[0].x;
             x2 = visibleMap.children[1].x;
@@ -382,85 +393,130 @@ Splab.MainGame.prototype = {
             visibleMap.children[2].x = x3 + 2048;
         }
 
-	    npcs.map(function(n) {n.destroy()});
+	    npcs.map(function(n) {n.kill()});
 	    // draw all npcs / other players
 	    var relativeNPCLocs = npcLocs.map(function(l) {
-            if (l - myPos < 0) {
-                return ((l - myPos) % worldSize + worldSize) % worldSize;
+	        if (myPos >= 256 && myPos <= worldSize - 256) { // normal case
+	            if (Math.abs(l - myPos) <= 256) {
+	                return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
             }
-            else {
-                return l - myPos;
+            else if (myPos < 256) {
+                if (l >= worldSize - (256 - myPos)) {
+                    // guaranteed to be in frame
+                    return -1 * (myPos + worldSize - l);
+                }
+                else if (Math.abs(l - myPos) <= 256) {
+                    return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
             }
+            else if (myPos > worldSize - 256) {
+                if (l <= 256 - (worldSize - myPos)) {
+                    return l + worldSize - myPos;
+                }
+                else if (Math.abs(l - myPos) <= 256) {
+                    return l - myPos;
+                }
+                else {
+                    return MAX_INT_UND;
+                }
+            }
+            // should be exhaustive
         });
 
         for (var i = 0 ; i < npcLocs.length ; i++) {
-            if ((relativeNPCLocs[i] >= 0 && relativeNPCLocs[i] <= 256) ||
-                (relativeNPCLocs[i] >= 256 && relativeNPCLocs[i] <= 512)) {
+            if (relativeNPCLocs[i] != MAX_INT_UND) {
                 // we render this npc
                 var adjustedLoc = relativeNPCLocs[i];
                 if (adjustedLoc >= 256) {
                     adjustedLoc = -1 * (512 - adjustedLoc);
                 }
                 //console.log(adjustedLoc);
-                var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
-                npc.anchor.set(0.5, 0.5);
-                npc.smoothed = false;
-                if (npcProperties[i].facing) {
-                    npc.scale.setTo(4);
+                var npc = npcGroup.getFirstDead(false, this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk', currentFrame);
+                if(npc != null) {
+                    npc.children[0].tint = faceColors[npcProperties[i].appearance.skin_color];
+                    npc.children[1].tint = hairColors[npcProperties[i].appearance.hair_color];
+                    npc.children[2].tint = shirtColors[npcProperties[i].appearance.shirt];
+                    if (npcProperties[i].facing) {
+                        npc.scale.setTo(4);
+                    }
+                    else {
+                        npc.scale.setTo(4);
+                        npc.scale.x = -4;
+                    }
+                    npc.children[0].frame = currentFrame;
+                    npc.children[1].frame = currentFrame;
+                    npc.children[2].frame = currentFrame;
                 }
                 else {
-                    npc.scale.setTo(4);
-                    npc.scale.x = -4;
+                    var npc = this.game.add.sprite(this.game.world.centerX + adjustedLoc, this.game.world.height - 74, 'allwalk');
+                    npc.anchor.set(0.5, 0.5);
+                    npc.smoothed = false;
+                    if (npcProperties[i].facing) {
+                        npc.scale.setTo(4);
+                    }
+                    else {
+                        npc.scale.setTo(4);
+                        npc.scale.x = -4;
+                    }
+
+                    npc.frame = currentFrame;
+
+                    var face = this.make.sprite(0, 0, 'sciface');
+                    face.anchor.set(0.5, 0.5);
+                    face.smoothed = false;
+                    face.tint = faceColors[npcProperties[i].appearance.skin_color];
+                    face.frame = currentFrame;
+                    npc.addChild(face);
+
+
+                    if (npcProperties[i].appearance.hair == 0) {
+                        var guyhair = this.make.sprite(0, 0, 'guyhair');
+                        guyhair.anchor.set(0.5, 0.5);
+                        guyhair.smoothed = false;
+                        guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                        npc.addChild(guyhair);
+                        guyhair.frame = currentFrame;
+                    }
+                    else {
+                        var girlhair = this.make.sprite(0, 0, 'girlhair');
+                        girlhair.anchor.set(0.5, 0.5);
+                        girlhair.smoothed = false;
+                        //console.log(npcProperties[i].appearance.hair_color);
+                        girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
+                        npc.addChild(girlhair);
+                        girlhair.frame = currentFrame;
+                    }
+
+                    var shirt = this.make.sprite(0, 0, 'scishirt');
+                    shirt.anchor.set(0.5, 0.5);
+                    shirt.smoothed = false;
+                    shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
+                    npc.addChild(shirt);
+                    shirt.frame = currentFrame;
+
+                    this.game.physics.arcade.enable(npc);
+    		        //face.animations.add('bounce');
+    				//shirt.animations.add('bounce');
+    				//npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
+                    //face.animations.play('bounce', sciFPS, true);
+                    //shirt.animations.play('bounce', sciFPS, true);
+                    //npc.animations.play('sciwalk', sciFPS, true);
+
+                    //npc.body.gravity.y = 2000;
+                    npcGroup.add(npc);
+                    npcs.push(npc);
                 }
-
-                npc.frame = currentFrame;
-
-                var face = this.make.sprite(0, 0, 'sciface');
-                face.anchor.set(0.5, 0.5);
-                face.smoothed = false;
-                face.tint = faceColors[npcProperties[i].appearance.skin_color];
-                face.frame = currentFrame;
-                npc.addChild(face);
-
-
-                if (npcProperties[i].appearance.hair == 0) {
-                    var guyhair = this.make.sprite(0, 0, 'guyhair');
-                    guyhair.anchor.set(0.5, 0.5);
-                    guyhair.smoothed = false;
-                    guyhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-                    npc.addChild(guyhair);
-                    guyhair.frame = currentFrame;
-                }
-                else {
-                    var girlhair = this.make.sprite(0, 0, 'girlhair');
-                    girlhair.anchor.set(0.5, 0.5);
-                    girlhair.smoothed = false;
-                    //console.log(npcProperties[i].appearance.hair_color);
-                    girlhair.tint = hairColors[npcProperties[i].appearance.hair_color];
-                    npc.addChild(girlhair);
-                    girlhair.frame = currentFrame;
-                }
-
-                var shirt = this.make.sprite(0, 0, 'scishirt');
-                shirt.anchor.set(0.5, 0.5);
-                shirt.smoothed = false;
-                shirt.tint = shirtColors[npcProperties[i].appearance.shirt];
-                npc.addChild(shirt);
-                shirt.frame = currentFrame;
-
-                this.game.physics.arcade.enable(npc);
-		        //face.animations.add('bounce');
-				//shirt.animations.add('bounce');
-				//npc.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
-                //face.animations.play('bounce', sciFPS, true);
-                //shirt.animations.play('bounce', sciFPS, true);
-                //npc.animations.play('sciwalk', sciFPS, true);
-
-                //npc.body.gravity.y = 2000;
-                npcs.push(npc);
             }
         }
 
+        this.world.bringToTop(npcGroup);
 
         // moveeeee!
         for (var i = 0 ; i < npcLocs.length ; i++) {
@@ -480,7 +536,7 @@ Splab.MainGame.prototype = {
             mySpeed = -1 * mySpeed;
         }
 
-        myPos = ((myPos + speed) % worldSize + worldSize) % worldSize;
+        myPos = ((myPos + mySpeed) % worldSize + worldSize) % worldSize;
 
 
         // Check collisions
@@ -492,7 +548,6 @@ Splab.MainGame.prototype = {
 			if(starSpeed < 0) starSpeed *= -1;
 			if(bgSpeed < 0)	bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
             player.scale.x = -4;
 		}
@@ -501,13 +556,12 @@ Splab.MainGame.prototype = {
 			if(starSpeed > 0) starSpeed *= -1;
 			if(bgSpeed > 0) bgSpeed *= -1;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
             player.scale.x = 4;
 		}
 
 		// Jump
-		if (key_jump.isDown && player.body.touching.down && hitPlatform) {
+		if ((key_jump.isDown || cursors.up.isDown) && player.body.touching.down && hitPlatform) {
 			player.body.velocity.y -= isChicken ? 750 : 600; // TODO use impulse instead
 		}
 
@@ -519,29 +573,33 @@ Splab.MainGame.prototype = {
 		}
 
         // Transform
-        if(transform.isDown && lastTransform + cooldown < this.time.now) {
+        if((transform.isDown || cursors.down.isDown) && lastTransform + cooldown < this.time.now) {
+            // Disappears scientists sprites and reveals chickenbar
             playerface.alpha = 0;
             playerguyhair.alpha = 0;
             playergirlhair.alpha = 0;
             playershirt.alpha = 0;
             chickenBar.alpha = 1;
 
+            // Play chicken animation, stops others
             player.animations.play('cwalk', cFPS, true);
             playerface.animations.stop();
             playerguyhair.animations.stop();
             playergirlhair.animations.stop();
             playershirt.animations.stop();
 
+            // Increases bg scrolling speed
 			starSpeed *= 1.5;
 			bgSpeed *= 2;
 			stars.autoScroll(starSpeed, 0);
-			this.scrollBG(bgSpeed);
 
+            // Starts timers on transform time and bar decrement
             this.time.events.add(Phaser.Timer.SECOND * transformTime, this.transformBack, this);
             chickenBarIndex = transformTime - 1;
             chickenTimerLoop = this.time.events.loop(Phaser.Timer.SECOND, this.decreaseChickenBar, this);
 			lastTransform = this.time.now + transformTime * 1000;
 
+            // Play bawks
 			bawk.play();
 
 			isChicken = true;

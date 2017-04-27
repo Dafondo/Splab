@@ -63,8 +63,8 @@ def query_state():
     if state == None:
         emit('connection', {'state': 'empty'})
     elif len(state['players']) == state['capacity']:
-        state = None
-        emit('connection', {'state': 'empty'})
+        # state = None
+        emit('connection', {'state': 'full'})
     else:
         emit('connection', {'state': 'waiting'})
 
@@ -130,6 +130,12 @@ def join_request(data):
 @socketio.on("change_state")
 def change_state(data): # we actually just broadcast
     emit('action', data, broadcast=True)
+
+@socketio.on("finished")
+def game_finished():
+    global state
+    state = None
+    print state
 
 if __name__ == '__main__':
     socketio.run(app, host="0.0.0.0", port=5000, debug=True)

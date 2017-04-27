@@ -1,5 +1,6 @@
 var Splab = Splab || {};
 
+
 var game = Splab.game = new Phaser.Game(512, 512, Phaser.CANVAS);
 
 Phaser.Canvas.setSmoothingEnabled(this, false);
@@ -14,7 +15,6 @@ Splab.game.global = {
     size: null,
     state: null // state of entire game, set at start
 };
-
 
 // Add game states
 Splab.game.state.add('Boot', Splab.Boot);
