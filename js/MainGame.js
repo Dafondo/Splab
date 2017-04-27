@@ -109,6 +109,9 @@ Splab.MainGame.prototype = {
         else if(Splab.game.global.size === 'large') mapLength = 4096;
         mapNumTiles = mapLength / 512;
 
+        if (!myInfo.facing) {
+            bgSpeed = -1 * bgSpeed;
+        }
 	},
 
 	preload: function() {
@@ -173,6 +176,11 @@ Splab.MainGame.prototype = {
         player.anchor.set(0.5, 0.5);
         player.smoothed = false;
         player.scale.setTo(4);
+
+        if (!myInfo.facing) {
+            player.scale.x = -4;
+        }
+
 		this.game.physics.arcade.enable(player);
         playerGroup.add(player);
 
@@ -180,25 +188,25 @@ Splab.MainGame.prototype = {
         playerface = this.make.sprite(0, 0, 'sciface');
         playerface.anchor.set(0.5, 0.5);
         playerface.smoothed = false;
-        playerface.tint = Math.random() * 0xffffff;
+        playerface.tint = choose(faceColors);
         player.addChild(playerface);
 
         playerguyhair = this.make.sprite(0, 0, 'guyhair');
         playerguyhair.anchor.set(0.5, 0.5);
         playerguyhair.smoothed = false;
-        playerguyhair.tint = Math.random() * 0xffffff;
+        playerguyhair.tint = choose(hairColors);
         player.addChild(playerguyhair);
 
         playergirlhair = this.make.sprite(0, 0, 'girlhair');
         playergirlhair.anchor.set(0.5, 0.5);
         playergirlhair.smoothed = false;
-        playergirlhair.tint = Math.random() * 0xffffff;
+        playergirlhair.tint = choose(hairColors);
         player.addChild(playergirlhair);
 
         playershirt = this.make.sprite(0, 0, 'scishirt');
         playershirt.anchor.set(0.5, 0.5);
         playershirt.smoothed = false;
-        playershirt.tint = Math.random() * 0xffffff;
+        playershirt.tint = choose(shirtColors);
         player.addChild(playershirt);
 
         // Choose guy or girl
@@ -303,10 +311,10 @@ Splab.MainGame.prototype = {
         for(var i = 0; i < chickenBar.children.length; i++) chickenBar.children[i].alpha = 1;
 
         // Change sprite colors
-        playerface.tint = Math.random() * 0xffffff;
-        playerguyhair.tint = Math.random() * 0xffffff;
-        playergirlhair.tint = Math.random() * 0xffffff;
-        playershirt.tint = Math.random() * 0xffffff;
+        playerface.tint = choose(faceColors);
+        playerguyhair.tint = choose(hairColors);
+        playergirlhair.tint = choose(hairColors);
+        playershirt.tint = choose(shirtColors);
 
         // Make scientist sprite visible
         playerface.alpha = 1;
@@ -334,10 +342,7 @@ Splab.MainGame.prototype = {
         if(chickenBarIndex-- === 0) this.time.events.remove(chickenTimerLoop);
     },
 	update: function() {
-	    console.log("^^^");
-	    console.log(npcLocs[0]);
-	    console.log(myPos);
-	    console.log("^^^");
+	    console.log(myInfo);
 		// Animation frame for npcs
 		if(this.time.now > nextFrameTime) {
 			currentFrame = (currentFrame + 1) % 8;
@@ -523,9 +528,6 @@ Splab.MainGame.prototype = {
             if (!npcProperties[i].facing) {
                 speed = -1 * speed;
             }
-
-            npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
-        }
 
             npcLocs[i] = ((npcLocs[i] + speed) % worldSize + worldSize) % worldSize;
         }
