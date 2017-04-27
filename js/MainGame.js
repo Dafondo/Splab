@@ -275,7 +275,7 @@ Splab.MainGame.prototype = {
 		// Create cursor keys
 		cursors = this.game.input.keyboard.createCursorKeys();
 		key_jump = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-        transform = this.game.input.keyboard.addKey(Phaser.Keyboard.Z);
+        transform = this.game.input.keyboard.addKey(Phaser.Keyboard.C);
 		key_run = this.game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
 		key_run.onDown.add(this.startRun, this);
 		key_run.onUp.add(this.endRun, this);
@@ -534,7 +534,7 @@ Splab.MainGame.prototype = {
 		}
 
 		// Jump
-		if (key_jump.isDown && player.body.touching.down && hitPlatform) {
+		if ((key_jump.isDown || cursors.up.isDown) && player.body.touching.down && hitPlatform) {
 			player.body.velocity.y -= isChicken ? 750 : 600; // TODO use impulse instead
 		}
 
@@ -546,7 +546,7 @@ Splab.MainGame.prototype = {
 		}
 
         // Transform
-        if(transform.isDown && lastTransform + cooldown < this.time.now) {
+        if((transform.isDown || cursors.down.isDown) && lastTransform + cooldown < this.time.now) {
             // Disappears scientists sprites and reveals chickenbar
             playerface.alpha = 0;
             playerguyhair.alpha = 0;
