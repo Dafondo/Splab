@@ -11,6 +11,7 @@ Splab.WaitScreen.prototype = {
     },
     preload: function() {
         console.log("HIIIII");
+        Splab.game.stage.disableVisibilityChange=true;
         Splab.game.global.socket.on('join', function(data) {
             console.log(data.uname + " has joined");
             Splab.game.global.users.push(data.uname);

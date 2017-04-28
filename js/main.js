@@ -16,6 +16,8 @@ Splab.game.global = {
     state: null // state of entire game, set at start
 };
 
+Splab.game.stage.disableVisibilityChange=true;
+
 // Add game states
 Splab.game.state.add('Boot', Splab.Boot);
 Splab.game.state.add('Preload', Splab.Preload);

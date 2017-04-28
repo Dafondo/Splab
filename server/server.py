@@ -40,7 +40,7 @@ def gen_player(username, id):
             'alive': True,
             'facing': bool(r.getrandbits(1)),
             'running': False,
-            'disguise': gen_random_appearance(),
+            'appearance': gen_random_appearance(),
             'disguised': True,
             'can_trans': True}
 
