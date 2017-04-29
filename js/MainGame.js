@@ -185,7 +185,7 @@ Splab.MainGame.prototype = {
                     break;
 
                 case TRANSFORM_BACK:
-
+                    isChicken = false;
                     if (id != myInfo.id) {
                         if (id > myInfo.id) id--;
                         playerInfo[id].disguised = true;
@@ -766,7 +766,8 @@ Splab.MainGame.prototype = {
         //}
 
         // Transform
-        if((transform.isDown || cursors.down.isDown) && lastTransform + cooldown < this.time.now) {
+        if((transform.isDown || cursors.down.isDown) && lastTransform + cooldown < this.time.now && !isChicken) {
+            isChicken = true;
             sendToServer(TRANSFORM_TO_CHICKEN, null);
             // Disappears scientists sprites and reveals chickenbar
             // Increases bg scrolling speed
