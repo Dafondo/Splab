@@ -171,11 +171,11 @@ Splab.MainGame.prototype = {
                         chickenBar.alpha = 1;
 
                         // Play chicken animation, stops others
-                        player.animations.play('cwalk', cFPS, true);
-                        playerface.animations.stop();
-                        playerguyhair.animations.stop();
-                        playergirlhair.animations.stop();
-                        playershirt.animations.stop();
+                        //player.animations.play('cwalk', cFPS, true);
+                        //playerface.animations.stop();
+                        //playerguyhair.animations.stop();
+                        //playergirlhair.animations.stop();
+                        //playershirt.animations.stop();
 
                         Splab.game.time.events.add(Phaser.Timer.SECOND * transformTime, Splab.MainGame.prototype.transformBack, Splab.MainGame.prototype);
                         chickenBarIndex = transformTime - 1;
@@ -209,11 +209,11 @@ Splab.MainGame.prototype = {
                         playershirt.alpha = 1;
 
                         // Play scientist animations
-                        playerface.animations.play('bounce', sciFPS, true);
-                        playerguyhair.animations.play('bounce', sciFPS, true);
-                        playergirlhair.animations.play('bounce', sciFPS, true);
-                        playershirt.animations.play('bounce', sciFPS, true);
-                        player.animations.play('sciwalk', sciFPS, true);
+                        //playerface.animations.play('bounce', sciFPS, true);
+                        //playerguyhair.animations.play('bounce', sciFPS, true);
+                        //playergirlhair.animations.play('bounce', sciFPS, true);
+                        //playershirt.animations.play('bounce', sciFPS, true);
+                        //player.animations.play('sciwalk', sciFPS, true);
                     }
 
                     break;
@@ -230,12 +230,12 @@ Splab.MainGame.prototype = {
         starSpeed *= 1.5;
         bgSpeed *= 2;
         stars.autoScroll(starSpeed, 0);
-        sciwalk.speed *= 2;
-        cwalk.speed *= 2;
-        faceBounce.speed *= 2;
-        guyhairBounce.speed *= 2;
-        girlhairBounce.speed *= 2;
-        shirtBounce.speed *= 2;
+        //sciwalk.speed *= 2;
+        //cwalk.speed *= 2;
+        //faceBounce.speed *= 2;
+        //guyhairBounce.speed *= 2;
+        //girlhairBounce.speed *= 2;
+        //shirtBounce.speed *= 2;
     },
     endRun: function() {
         sciFPS /= 2;
@@ -243,12 +243,12 @@ Splab.MainGame.prototype = {
         starSpeed /= 1.5;
         bgSpeed /= 2;
         stars.autoScroll(starSpeed, 0);
-        sciwalk.speed /= 2;
-        cwalk.speed /= 2;
-        faceBounce.speed /= 2;
-        guyhairBounce.speed /= 2;
-        girlhairBounce.speed /= 2;
-        shirtBounce.speed /= 2;
+        //sciwalk.speed /= 2;
+        //cwalk.speed /= 2;
+        //faceBounce.speed /= 2;
+        //guyhairBounce.speed /= 2;
+        //girlhairBounce.speed /= 2;
+        //shirtBounce.speed /= 2;
     },
     create: function() {
         this.stage.backgroundColor = '0xffffff';
@@ -354,19 +354,19 @@ Splab.MainGame.prototype = {
         visibleMap.children[2].world.x = xLoc + 512;
 
         // Create animations
-        sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
-        cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
-        faceBounce = playerface.animations.add('bounce');
-        guyhairBounce = playerguyhair.animations.add('bounce');
-        girlhairBounce = playergirlhair.animations.add('bounce');
-        shirtBounce = playershirt.animations.add('bounce');
+        //sciwalk = player.animations.add('sciwalk', [0, 1, 2, 3, 4, 5, 6, 7]);
+        //cwalk = player.animations.add('cwalk', [8, 9, 10, 11, 12, 13, 14, 15]);
+        //faceBounce = playerface.animations.add('bounce');
+        //guyhairBounce = playerguyhair.animations.add('bounce');
+        //girlhairBounce = playergirlhair.animations.add('bounce');
+        //shirtBounce = playershirt.animations.add('bounce');
 
         // Play animations
-        player.animations.play('sciwalk', sciFPS, true);
-        playerface.animations.play('bounce', sciFPS, true);
-        playerguyhair.animations.play('bounce', sciFPS, true);
-        playergirlhair.animations.play('bounce', sciFPS, true);
-        playershirt.animations.play('bounce', sciFPS, true);
+        //player.animations.play('sciwalk', sciFPS, true);
+        //playerface.animations.play('bounce', sciFPS, true);
+        //playerguyhair.animations.play('bounce', sciFPS, true);
+        //playergirlhair.animations.play('bounce', sciFPS, true);
+        //playershirt.animations.play('bounce', sciFPS, true);
 
         // Player physics
         player.body.bounce.y = 0;
@@ -597,6 +597,12 @@ Splab.MainGame.prototype = {
                 }
             }
         }
+
+        player.frame = currentFrame;
+        playerface.frame = currentFrame;
+        playerguyhair.frame = currentFrame;
+        playergirlhair.frame = currentFrame;
+        playershirt.frame = currentFrame;
 
         this.world.bringToTop(npcGroup);
 
