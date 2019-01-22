@@ -3,7 +3,7 @@ It's a space lab!
 
 ## Video
 - https://youtu.be/skfnYDJMj9M
-<!-- - <span><img src="" width="375"> -->
+- <span><img src="https://github.com/Dafondo/Splab/blob/master/assets/gifs/gif.gif" width="375">
  
 
 
